@@ -1,8 +1,8 @@
 # Technology logo sources
 
-The technology section uses locally hosted brand marks from the [Devicon project](https://github.com/devicons/devicon), pinned to commit [`6a37858047b0e8d9c9c0e68f4a071fc410652e89`](https://github.com/devicons/devicon/tree/6a37858047b0e8d9c9c0e68f4a071fc410652e89), dated 11 October 2026. The files were downloaded on 14 October 2026 and copied without vector or color edits.
+The repository retains locally hosted brand marks from the [Devicon project](https://github.com/devicons/devicon), pinned to commit [`6a37858047b0e8d9c9c0e68f4a071fc410652e89`](https://github.com/devicons/devicon/tree/6a37858047b0e8d9c9c0e68f4a071fc410652e89), dated 11 October 2026. The files were downloaded on 14 October 2026 and copied without vector or color edits. The current compact toolbox uses text links; these marks are preserved reference assets.
 
-The tool names and their associated projects remain derived from published CMS content. These assets supply marks for the nine existing tool labels; they do not add technologies to the portfolio. Unrecognized CMS tool names retain their text labels without a substitute logo. Node/npm displays the separate Node.js and npm marks.
+The toolbox names and their associated projects remain derived from published CMS content. These retained assets cover the nine documented tool labels and do not add technologies to the portfolio. Node/npm has separate Node.js and npm reference marks.
 
 | CMS tool | Local file in `frontend/public/images/tech/` | Pinned upstream SVG |
 | --- | --- | --- |

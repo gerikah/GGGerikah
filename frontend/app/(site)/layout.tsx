@@ -4,7 +4,6 @@ import { Footer } from "@frontend/components/layout/footer";
 import { ArchiveMotion } from "@frontend/components/motion/archive-motion";
 import { getSiteSettings } from "@backend/cms/data";
 import "@frontend/styles/taste.css";
-import "@frontend/styles/loading-screen.css";
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const settings = await getSiteSettings();

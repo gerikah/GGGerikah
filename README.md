@@ -2,7 +2,7 @@
 
 A charcoal portfolio for **Gerikah**, UI/UX Designer and Frontend Developer. The published seed contains eight projects identified from the supplied screenshots, wireframes, and diagrams. Marci Metzger Homes remains explicitly an **independent redesign concept**. Source images and the supplied portrait are preserved in `frontend/design/assets/` and copied into `frontend/public/images/` for the portfolio.
 
-The public interface uses the taste skill’s **Pinned poster** direction: locally hosted Michroma/Manrope typography, the supplied Mosaic Lens hero, real project plates, a wireframe/build comparison, and Gerikah’s charcoal gradient references. Phosphor supplies action icons; locally hosted brand marks identify the CMS tech stack. See [the redesign report](docs/taste-redesign.md) and [logo attribution](docs/technology-logo-attribution.md). The original OpenDesign export remains archived in `frontend/design/opendesign/`.
+The public interface is a dark editorial archive with locally hosted Manrope and IBM Plex Mono. Off The Rack leads with a wireframe/interface toggle; Marci Metzger Homes and Ground Control Station have distinct compositions. Actual inquiry and admin screens provide design-to-build evidence. The remaining work is collected in a compact `/work` index. Navigation stays visible without loading overlays. See [the redesign report](docs/taste-redesign.md). The original OpenDesign export and technology artwork remain archived.
 
 ## Published project inventory
 
@@ -25,8 +25,8 @@ This repository is a separate replacement project. Develop and deploy it as a ne
 
 - Next.js 16 App Router, React, strict TypeScript, Tailwind CSS, and Framer Motion.
 - Supabase Auth, Postgres with Row-Level Security, and a private Storage bucket.
-- `/`: introduction, design/build comparison, eight-project work archive, about snapshot, CMS-derived tech stack, process, and contact.
-- `/work`: published project archive.
+- `/`: project index, featured Off The Rack comparison, two selected studies, actual design/build evidence, short about note, project-linked toolbox, contact, and complete archive link.
+- `/work`: compact index of all published projects with direct case-study links.
 - `/work/[slug]`: reusable case study assembled from CMS sections and media.
 - `/login`: email/password sign-in; there is no public sign-up page.
 - `/admin`: authenticated administration, restricted to profiles with `role = 'admin'`.

@@ -5,9 +5,9 @@ import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "@fontsource/space-grotesk/700.css";
 import "@fontsource/ibm-plex-mono/400.css";
-import "@fontsource/michroma/latin-400.css";
 import "@fontsource/manrope/latin-400.css";
 import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
 import "@frontend/styles/globals.css";
 import "@frontend/styles/brand.css";
 

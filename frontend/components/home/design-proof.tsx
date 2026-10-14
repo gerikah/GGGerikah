@@ -1,25 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
-import { useEffect, useState } from "react";
-import { Reveal } from "@frontend/components/motion/archive-motion";
+import { useState } from "react";
+import wireframe from "@frontend/public/images/off-the-rack/wireframe.png";
+import storefront from "@frontend/public/images/off-the-rack/home.jpg";
 
 export function DesignProof() {
   const [view, setView] = useState<"design" | "build">("build");
-  const [enhanced, setEnhanced] = useState(false);
-  useEffect(() => { const frame = requestAnimationFrame(() => setEnhanced(true)); return () => cancelAnimationFrame(frame); }, []);
-  return <section className="design-proof" aria-labelledby="proof-title">
-    <div className="design-proof__copy"><Reveal><h2 id="proof-title">Same idea.<br />Made real.</h2></Reveal><Reveal delay={0.08}><p>Off The Rack, from the first homepage wireframe to the finished storefront.</p></Reveal><Link href="/work/off-the-rack">See the project<ArrowUpRight className="ui-icon" size={20} weight="regular" aria-hidden="true" focusable="false" /></Link></div>
-    <div className="design-proof__stage">
-      <div className="design-proof__controls" role="group" aria-label="Off The Rack design and build comparison"><button type="button" aria-pressed={view === "design"} onClick={() => setView("design")}>The design</button><button type="button" aria-pressed={view === "build"} onClick={() => setView("build")}>The build</button></div>
-      <div className="design-proof__images" data-view={view}>
-        <figure className="design-proof__image design-proof__image--design" aria-hidden={enhanced && view !== "design"} tabIndex={enhanced && view === "design" ? 0 : undefined}><Image src="/images/off-the-rack/wireframe.png" alt="Original Off The Rack homepage wireframe" width={1440} height={3822} sizes="(max-width: 720px) 92vw, 56vw" /><figcaption>Homepage wireframe</figcaption></figure>
-        <figure className="design-proof__image design-proof__image--build" aria-hidden={enhanced && view !== "build"} tabIndex={enhanced && view === "build" ? 0 : undefined}><Image src="/images/off-the-rack/home.jpg" alt="Finished Off The Rack storefront homepage" width={1348} height={4351} sizes="(max-width: 720px) 92vw, 56vw" /><figcaption>Finished storefront</figcaption></figure>
-      </div>
-      <p className="design-proof__caption" aria-live="polite">{view === "design" ? "The original homepage wireframe" : "The finished storefront interface"}</p>
-      <noscript><style>{".design-proof__controls,.design-proof__caption{display:none!important}.design-proof__image{position:relative!important;opacity:1!important;overflow:visible!important}.design-proof__images{height:auto!important;overflow:visible!important}.design-proof__image img{max-height:440px;object-fit:cover;object-position:top}"}</style></noscript>
+  return <div className="project-switch">
+    <div className="project-switch__bar"><p className="meta">Same structure. Made real.</p><div className="project-switch__controls" role="group" aria-label="Off The Rack wireframe and built interface"><button type="button" aria-pressed={view === "design"} aria-controls="otr-comparison" onClick={() => setView("design")}>Wireframe</button><button type="button" aria-pressed={view === "build"} aria-controls="otr-comparison" onClick={() => setView("build")}>Built interface</button></div></div>
+    <div id="otr-comparison" className="project-switch__stage" data-view={view}>
+      <figure className="project-switch__image project-switch__image--design" aria-hidden={view !== "design"}><Image src={wireframe} alt="Original Off The Rack homepage wireframe showing the hero and collection structure" sizes="90vw" placeholder="blur" /></figure>
+      <figure className="project-switch__image project-switch__image--build" aria-hidden={view !== "build"}><Image src={storefront} alt="Built Off The Rack storefront showing the hero and clothing collection" sizes="90vw" preload placeholder="blur" /></figure>
     </div>
-  </section>;
+    <p className="project-switch__caption meta" aria-live="polite">{view === "design" ? "01a / The original homepage wireframe" : "01b / The finished storefront interface"}</p>
+    <noscript><style>{".project-switch__controls{display:none}.project-switch__image--design{display:none}.project-switch__image--build{opacity:1}"}</style></noscript>
+  </div>;
 }

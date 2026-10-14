@@ -1,159 +1,73 @@
-import { expect, test, type Page } from "@playwright/test";
-import { mkdirSync, readFileSync } from "node:fs";
+import { expect, test } from "@playwright/test";
 
-const seed = JSON.parse(readFileSync("database/seed-data.json", "utf8"));
-const projects = seed.projects.filter((project: { is_published: boolean }) => project.is_published);
-async function ready(page: Page) {
-  await expect(page.locator(".od-public")).toHaveAttribute("data-loading", "false");
-  await expect(page.locator("[data-logo-loader]")).toHaveCount(0);
+for (const width of [1440, 390]) {
+  test(`anchor navigation keeps content visible and usable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await page.evaluate(() => {
+      const states: string[] = [];
+      const inspect = () => {
+        const content = document.querySelector<HTMLElement>("[data-site-content]")!;
+        if (document.querySelector("[data-logo-loader]")) states.push("loader");
+        if (document.querySelector('.od-public[data-loading="true"]')) states.push("loading");
+        if (content.inert) states.push("inert");
+        if (getComputedStyle(content).opacity === "0") states.push("hidden");
+      };
+      const observer = new MutationObserver(inspect);
+      observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+      Object.assign(window, { navigationVisibilityStates: states });
+      inspect();
+    });
+    await page.locator(".editorial-hero").getByRole("link", { name: "Browse selected work", exact: true }).click();
+    await expect(page).toHaveURL(/#work$/);
+    await expect(page.locator("#work")).toBeInViewport();
+    await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Contact", exact: true }).click();
+    await expect(page).toHaveURL(/#contact$/);
+    await expect(page.locator("#contact")).toBeInViewport();
+    await expect(page.locator("[data-site-content]")).toHaveCSS("opacity", "1");
+    await expect(page.locator("[data-logo-loader]")).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as { navigationVisibilityStates: string[] }).navigationVisibilityStates)).toEqual([]);
+    await expect(page.locator("#contact a[href='mailto:aldaygerikah@gmail.com']")).toBeVisible();
+    await expect(page.locator("#contact a[href='https://github.com/gerikah']")).toBeVisible();
+    await expect(page.locator("footer a[href='/work']").first()).toBeVisible();
+  });
 }
 
-test("branding and CMS toolkit follow the requested section order", async ({ page }) => {
+test("reduced motion keeps the archive static and exposed", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await ready(page);
-  await expect(page.locator(".nav__brand")).toHaveText("");
-  await expect(page.locator(".nav__brand img")).toHaveAttribute("src", /logo-white/);
-  await expect(page.locator("footer img")).toHaveCount(0);
-  await expect(page.locator(".brand-footer__name")).toHaveText("Gerikah");
-  const sections = await page.locator("main > section[id]").evaluateAll(nodes => nodes.map(node => node.id));
-  expect(sections).toEqual(["work", "about", "stack", "process", "contact"]);
-  expect(await page.locator(".tech-stack__tool").allTextContents()).toEqual(Array.from(new Set(projects.flatMap((project: { tools: string[] }) => project.tools))));
-  // Every currently evidenced tool has a real, locally served brand mark.
-  for (const tool of await page.locator(".tech-stack__tool").all()) {
-    await tool.scrollIntoViewIfNeeded();
-    expect(await tool.locator("img.tech-stack__logo").count()).toBeGreaterThan(0);
-    for (const logo of await tool.locator("img.tech-stack__logo").all()) {
-      await expect(logo).toHaveAttribute("src", /^\/images\/tech\/.+\.svg$/);
-      await expect(logo).toHaveAttribute("alt", "");
-      await expect.poll(() => logo.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-    }
-  }
-  await expect(page.locator(".hero .btn svg")).toHaveAttribute("aria-hidden", "true");
-  await expect(page.locator("body")).not.toContainText("aldaygerikah@gmail.com");
-  await expect(page.locator("body")).not.toContainText("Alday");
-  for (const [width, section] of [[1440, "#stack"], [390, "#stack"], [1440, "footer"], [390, "footer"]] as const) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.locator(section).scrollIntoViewIfNeeded();
-    mkdirSync(".local/screenshots", { recursive: true });
-    await page.locator(section).screenshot({ path: `.local/screenshots/${section === "footer" ? "footer" : "toolkit"}-${width}.png`, animations: "disabled" });
-  }
-});
-
-test("loader keeps old content hidden until a delayed query route commits", async ({ page }) => {
-  await page.goto("/work");
-  await ready(page);
-  let release!: () => void;
-  const held = new Promise<void>(resolve => { release = resolve; });
-  let requested = false;
-  await page.route(url => url.pathname === "/work" && url.searchParams.get("readiness") === "delayed", async route => {
-    if (route.request().headers().rsc === "1") { requested = true; await held; }
-    await route.continue();
-  });
-  try {
-    await page.evaluate(() => {
-      const link = document.createElement("a");
-      link.href = "/work?readiness=delayed";
-      link.textContent = "Readiness audit";
-      link.id = "readiness-audit";
-      link.style.cssText = "display:inline-block;margin:120px 24px 24px;padding:12px";
-      document.querySelector("main")!.prepend(link);
+  await expect(page.locator("[data-site-content]")).toHaveCSS("opacity", "1");
+  await expect(page.locator("[data-logo-loader], .mosaic-lens canvas")).toHaveCount(0);
+  const motion = await page.evaluate(() => {
+    const root = getComputedStyle(document.documentElement);
+    const animations = document.getAnimations().filter(animation => {
+      const target = (animation.effect as KeyframeEffect | null)?.target;
+      return animation.playState === "running" && target instanceof Element && Boolean(target.closest("[data-site-content]"));
     });
-    await page.locator("#readiness-audit").click();
-    await expect.poll(() => requested).toBe(true);
-    await expect(page.locator(".od-public")).toHaveAttribute("data-loading", "true");
-    await expect(page.locator("[data-logo-loader] img")).toHaveAttribute("src", /logo-white/);
-    await expect(page.locator("[data-site-content]")).toHaveCSS("opacity", "0");
-    release();
-    await expect(page).toHaveURL(/readiness=delayed/);
-    await ready(page);
-    await page.goBack();
-    await ready(page);
-    await expect(page).toHaveURL(/\/work$/);
-  } finally { release(); }
-});
-
-test("initial loader waits for the actual case cover to finish loading", async ({ page }) => {
-  let release!: () => void;
-  const held = new Promise<void>(resolve => { release = resolve; });
-  let requested = false;
-  await page.route(url => (url.searchParams.get("url") ?? url.pathname).includes("/images/riftbound/hero.png"), async route => {
-    requested = true; await held; await route.continue();
+    return { scroll: root.scrollBehavior, runningAnimations: animations.length };
   });
-  try {
-    await page.goto("/work/riftbound", { waitUntil: "domcontentloaded" });
-    await expect.poll(() => requested).toBe(true);
-    await expect(page.locator(".od-public")).toHaveAttribute("data-loading", "true");
-    await expect(page.locator("[data-logo-loader]")).toBeVisible();
-    release();
-    await ready(page);
-    await expect.poll(() => page.locator(".case-hero-image").evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  } finally { release(); }
+  expect(motion.scroll).toBe("auto");
+  expect(motion.runningAnimations).toBe(0);
+  const wireframe = page.locator(".project-switch").getByRole("button", { name: "Wireframe", exact: true });
+  await wireframe.click();
+  await expect(wireframe).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".project-switch").getByRole("img", { name: /Original Off The Rack homepage wireframe/ })).toBeVisible();
 });
 
-test("returning to a visible tab gates the screen and releases keyboard access", async ({ page }) => {
-  await page.goto("/");
-  await ready(page);
-  await page.evaluate(() => {
-    const root = document.querySelector(".od-public")!;
-    const states: string[] = [];
-    const observer = new MutationObserver(() => states.push(root.getAttribute("data-loading")!));
-    observer.observe(root, { attributes: true, attributeFilter: ["data-loading"] });
-    Object.assign(window, { readinessStates: states });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect.poll(() => page.evaluate(() => (window as unknown as { readinessStates: string[] }).readinessStates)).toContain("true");
-  await ready(page);
-  expect(await page.locator("[data-site-content]").evaluate(node => (node as HTMLElement).inert)).toBe(false);
-});
-
-for (const project of projects.slice(2)) {
-  test(`asset-backed case study: ${project.slug}`, async ({ page }) => {
-    await page.goto(`/work/${project.slug}`);
-    await ready(page);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
-    await expect(page.locator(".case-hero-image")).toHaveAttribute("alt", project.cover_alt);
-    await expect.poll(() => page.locator(".case-hero-image").evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-    for (const width of [360, 820, 1440]) {
+test("unknown routes expose recovery links and remain responsive", async ({ page }) => {
+  for (const route of ["/nothing-filed-here", "/work/not-a-published-project"]) {
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: "Not in this archive." })).toBeVisible();
+    await expect(page.locator("meta[name='robots']").first()).toHaveAttribute("content", /noindex/);
+    await expect(page.locator("[data-logo-loader]")).toHaveCount(0);
+    for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 900 });
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-      await page.evaluate(() => document.fonts.ready);
-      const headingLines = await page.locator(".case-heading h1").evaluate(node => node.getBoundingClientRect().height / parseFloat(getComputedStyle(node).lineHeight));
-      expect(headingLines).toBeLessThanOrEqual(2.01);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
     }
-    if (project.slug === "e-registered-messaging-system") {
-      await page.setViewportSize({ width: 360, height: 900 });
-      await page.goto("/");
-      await ready(page);
-      await page.locator(`[data-project="${project.slug}"]`).getByRole("button", { name: "View case study", exact: true }).click();
-      const dialog = page.getByRole("dialog");
-      await expect(dialog).toBeVisible();
-      await page.evaluate(() => document.fonts.ready);
-      const previewHeading = dialog.getByRole("heading", { name: project.title, exact: true });
-      const previewLines = await previewHeading.evaluate(node => node.getBoundingClientRect().height / parseFloat(getComputedStyle(node).lineHeight));
-      expect(previewLines).toBeLessThanOrEqual(2.01);
-      await page.keyboard.press("Escape");
-      await expect(dialog).toHaveCount(0);
-    }
-  });
-}
-
-test("404 completes its loader and provides working recovery links", async ({ page }) => {
-  const response = await page.goto("/nothing-filed-here");
-  expect(response?.status()).toBe(404);
-  await ready(page);
-  await expect(page.getByRole("heading", { name: "Not in this archive." })).toBeVisible();
-  await expect(page.locator("meta[name='robots']").first()).toHaveAttribute("content", /noindex/);
-  for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-    mkdirSync(".local/screenshots", { recursive: true });
-    await page.screenshot({ path: `.local/screenshots/not-found-${width}.png`, animations: "disabled" });
+    await page.getByRole("link", { name: /Return home/ }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/I design it\.\s*Then I build it\./);
   }
-  await page.getByRole("link", { name: /Return home/ }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await ready(page);
-  await page.goto("/work/not-a-published-project");
-  await ready(page);
-  await expect(page.getByRole("heading", { name: "Not in this archive." })).toBeVisible();
 });

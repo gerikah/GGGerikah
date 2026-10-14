@@ -1,53 +1,94 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { ArrowDownRightIcon } from "@phosphor-icons/react/dist/ssr/ArrowDownRight";
 import { ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr/ArrowUpRight";
 import { getCapabilities, getProjects, getSiteSettings } from "@backend/cms/data";
-import { HeroName, Reveal } from "@frontend/components/motion/archive-motion";
-import { ProjectCard } from "@frontend/components/work/project-card";
 import { Contact } from "@frontend/components/layout/footer";
 import { TechStack } from "@frontend/components/home/tech-stack";
 import { DesignProof } from "@frontend/components/home/design-proof";
-import MosaicLens from "@frontend/components/home/mosaic-lens";
+import storefront from "@frontend/public/images/off-the-rack/home.jpg";
+import marciScreen from "@frontend/public/images/marci/homepage.png";
+import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
+import mobileDashboard from "@frontend/public/images/ground-control-station/mobile-dashboard.png";
+import inquiryWireframe from "@frontend/public/images/off-the-rack/inquiry-wireframe.png";
+import inquiry from "@frontend/public/images/off-the-rack/inquiry.jpg";
+import administration from "@frontend/public/images/off-the-rack/admin.jpg";
+
+const selection = [
+  { slug: "off-the-rack", number: "01", label: "Storefront, from design to build", target: "work" }, // taste-skill-ignore: requested project index.
+  { slug: "marci-metzger-homes", number: "02", label: "A real estate homepage study", target: "marci" }, // taste-skill-ignore: requested project index.
+  { slug: "ground-control-station", number: "03", label: "A system across two screens", target: "ground-control" }, // taste-skill-ignore: requested project index.
+];
 
 export default async function HomePage() {
   const [settings, projects, capabilities] = await Promise.all([getSiteSettings(), getProjects(), getCapabilities()]);
-  const skills = capabilities.filter(item => item.kind === "capability");
-  const process = capabilities.filter(item => item.kind === "process");
-  const posters = await Promise.all(projects.map((project, i) => ProjectCard({ project, compact: i > 1 })));
-  return <main id="main-content" data-page-ready="/">
-    <section className="hero" aria-labelledby="hero-name">
-      <MosaicLens className="hero__mosaic" />
-      <div className="hero__inner">
-        <HeroName first="Gerikah" />
-        <div className="hero__copy">
-          <Reveal delay={0.08}><p className="hero__roles">{settings.role}<br />Manila, Philippines</p></Reveal>
-          <Reveal delay={0.16}><p className="hero__tagline">{settings.tagline.split(/(?<=\.)\s+(?=Then\b)/i).map((line, i) => <span key={i}>{i > 0 ? " " : ""}{line}</span>)}</p></Reveal>
-          <Reveal delay={0.24}><p className="hero__lead">{settings.hero_supporting_copy}</p><Link className="btn" href="#work">View the work <ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></Reveal>
+  const offTheRack = projects.find(project => project.slug === "off-the-rack");
+  const marci = projects.find(project => project.slug === "marci-metzger-homes");
+  const groundControl = projects.find(project => project.slug === "ground-control-station");
+  const selected = selection.flatMap(item => {
+    const project = projects.find(project => project.slug === item.slug);
+    return project ? [{ ...item, project }] : [];
+  });
+
+  return <main id="main-content" className="portfolio-home" data-page-ready="/">
+    <section className="editorial-hero wrap" aria-labelledby="hero-title">
+      <div className="editorial-hero__meta meta"><span>Interface design + frontend</span><span>Manila, PH</span></div>
+      <div className="editorial-hero__layout">
+        <div className="editorial-hero__copy">
+          <h1 id="hero-title">I design it.<br />Then I build it.</h1>
+          <p>{settings.hero_supporting_copy}</p>
+          <Link className="btn" href={selected.length ? "#work" : "/work"}>Browse selected work<ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
         </div>
+        {offTheRack && <figure className="hero-artifact">
+          <div className="hero-artifact__label meta"><span>01 / Off The Rack</span><span>Built interface</span></div>
+          <Link className="hero-artifact__crop" href="/work/off-the-rack" aria-label="Explore Off The Rack">
+            <Image src={storefront} alt="Off The Rack storefront collection of one-of-one clothing pieces" sizes="(max-width: 720px) 88vw, 44vw" preload placeholder="blur" />
+          </Link>
+          <figcaption><span className="meta">From the archive</span><span>A wireframe, a storefront,<br />and the data behind it.</span></figcaption>
+        </figure>}
       </div>
+      {selected.length > 0 && <nav className="hero-index" aria-label="Selected project index">
+        <p className="hero-index__label meta">Selected work</p>
+        <ol>{selected.map(item => <li key={item.slug}><Link href={`#${item.target}`}><span className="hero-index__number meta">{item.number}</span><span><strong>{item.project.title}</strong><small>{item.label}</small></span><ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></li>)}</ol>
+      </nav>}
     </section>
-    {projects.some(project => project.slug === "off-the-rack") && <DesignProof />}
-    <section className="section work-section" id="work" aria-labelledby="work-title">
-      <div className="wrap section__head"><Reveal><h2 className="section__title" id="work-title">The work</h2></Reveal><p>Interfaces, systems, and the thinking behind them.</p></div>
-      <div className="work-posters">{posters.length ? posters.map((poster, i) => <Fragment key={projects[i].id}>{poster}</Fragment>) : <p className="wrap empty-note">The archive is being prepared.</p>}</div>
-      <div className="wrap work__archive-link"><Link href="/work">Explore the full archive <ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></div>
-    </section>
-    <section className="section about-section" id="about" aria-labelledby="about-title">
-      <div className="wrap about__grid">
-        <div className="about__facts"><Reveal><h2 id="about-title">About me</h2></Reveal><p>Computer Engineer<br />Manila, Philippines</p>{settings.availability_text && <p>{settings.availability_text}</p>}</div>
-        <div><Reveal><p className="about__statement"><Image src="/images/portrait.png" alt="Gerikah in a blazer and tie" width={491} height={508} sizes="(max-width: 720px) 110px, 150px" className="about__portrait-image" />{settings.bio}</p></Reveal>
-          <ul className="about__skills">{skills.map((skill, i) => <li key={skill.id}><Reveal delay={i * 0.06}><p>{skill.title}</p><p className="about__skill-description">{skill.description}</p></Reveal></li>)}</ul>
-        </div>
+
+    {!offTheRack && <div id="work" />}
+    {offTheRack && <section id="work" className="featured-project wrap" aria-labelledby="featured-title">
+      <div className="project-heading"><div><p className="meta">01 / Featured project</p><h2 id="featured-title">{offTheRack.title}</h2></div><p className="project-heading__role meta">Interface design<br />Frontend + data integration</p></div>
+      <div className="featured-project__intro"><p>A storefront for one-of-one pieces.<br />Built from the first wireframe.</p><div><p>{offTheRack.short_description}</p><Link className="text-link" href="/work/off-the-rack">Read the case study<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></div></div>
+      <DesignProof />
+      <div className="featured-project__footnote"><p className="meta">Design → interface → working product</p><p>Product browsing, custom inquiries, and an admin interface connected to Supabase.</p></div>
+    </section>}
+
+    {(marci || groundControl) && <section id="selected-work" className="selected-work wrap" aria-labelledby="selected-title">
+      {/* taste-skill-ignore: real project index labels requested in the brief. */}
+      <div className="selected-work__heading"><h2 id="selected-title">{marci && groundControl ? "Two other ways of thinking." : "Another way of thinking."}</h2><p className="meta">Selected work / {marci && groundControl ? "02—03" : marci ? "02" : "03"}</p></div>{/* taste-skill-ignore: requested index. */}
+      {marci && <article id="marci" className="marci-study" aria-labelledby="marci-title">
+        <Link className="marci-study__image image-link" href="/work/marci-metzger-homes" aria-label="Explore Marci Metzger Homes"><Image src={marciScreen} alt="Marci Metzger Homes redesign with a clear contact action above a large property photograph" sizes="(max-width: 720px) 90vw, 66vw" placeholder="blur" /></Link>
+        <div className="marci-study__copy"><p className="meta">02 / Website redesign</p><h3 id="marci-title">{marci.title}</h3><p>A quieter page.<br />A clearer next step.</p><p className="marci-study__description">A responsive homepage with property imagery up front and contact actions kept close.</p><p className="concept-label">Independent redesign concept. Not an official client engagement.</p><Link className="text-link" href="/work/marci-metzger-homes">View the study<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></div>
+      </article>}
+      {groundControl && <article id="ground-control" className="gcs-study" aria-labelledby="gcs-title">
+        <div className="gcs-study__copy"><p className="meta">03 / Web + mobile interface</p><h3 id="gcs-title">{groundControl.title}</h3><p>Making a complex system readable.</p><p className="gcs-study__description">System status, flight records, and controls share a desktop view. On mobile, summary cards and a flight list take priority.</p><Link className="text-link" href="/work/ground-control-station">Explore the interface<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link><dl className="gcs-study__notes"><div><dt>Desktop</dt><dd>Overview + connection status</dd></div><div><dt>Mobile</dt><dd>Summary + recent flights</dd></div></dl></div>
+        <figure className="gcs-study__composition"><div className="gcs-study__desktop"><p className="meta">System overview</p><Link className="image-link" href="/work/ground-control-station" aria-label="View Ground Control Station desktop interface"><Image src={dashboard} alt="Ground Control Station desktop dashboard with flight records and connection controls" sizes="(max-width: 720px) 68vw, 42vw" placeholder="blur" /></Link></div><div className="gcs-study__mobile"><p className="meta">Mobile view</p><Image src={mobileDashboard} alt="Ground Control Station mobile dashboard with summary cards, recent flights, and bottom navigation" sizes="(max-width: 720px) 20vw, 13vw" placeholder="blur" /></div><figcaption className="meta">One system. Two reading distances.</figcaption></figure>
+      </article>}
+    </section>}
+
+    {offTheRack && <section id="process" className="build-evidence wrap" aria-labelledby="evidence-title">
+      <div className="build-evidence__heading"><p className="meta">A closer look / Off The Rack</p><h2 id="evidence-title">The details that work.</h2><p>Structure, interaction, and the data behind the screen.</p></div>
+      <div className="build-evidence__artifacts">
+        <figure><div className="build-evidence__crop build-evidence__crop--wireframe"><Image src={inquiryWireframe} alt="Early Off The Rack inquiry wireframe showing planned form fields" sizes="(max-width: 720px) 90vw, 30vw" placeholder="blur" /></div><figcaption><span className="meta">Design / Inquiry wireframe</span><p>The inquiry fields take shape before the visual styling.</p></figcaption></figure>
+        <figure><div className="build-evidence__crop"><Image src={inquiry} alt="Finished Off The Rack inquiry page with general and custom inquiry paths" sizes="(max-width: 720px) 90vw, 30vw" placeholder="blur" /></div><figcaption><span className="meta">Interface / Built inquiries</span><p>General questions and custom-piece requests have separate paths.</p></figcaption></figure>
+        <figure><div className="build-evidence__crop build-evidence__crop--admin"><Image src={administration} alt="Off The Rack product administration dashboard" sizes="(max-width: 720px) 90vw, 30vw" placeholder="blur" /></div><figcaption><span className="meta">Implementation / Product admin</span><p>The storefront connects to product administration, backed by Supabase.</p></figcaption></figure>
       </div>
+      <Link className="text-link" href="/work/off-the-rack">See how the pieces connect<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
+    </section>}
+
+    <section id="about" className="about-note wrap" aria-labelledby="about-title">
+      <div><p className="meta">A little about me</p><h2 id="about-title">Both sides<br />of the screen.</h2></div>
+      <div className="about-note__body"><p className="about-note__bio">{settings.bio}</p><p className="about-note__signature">Gerikah Alday<span className="meta">Computer Engineer · Manila, PH</span></p><ul className="about-note__capabilities" aria-label="Capabilities">{capabilities.filter(item => item.kind === "capability").map(item => <li key={item.id}>{item.title}</li>)}</ul></div>
     </section>
     <TechStack projects={projects} />
-    <section className="section process-section" id="process" aria-labelledby="process-title">
-      <div className="wrap process__layout">
-        <div className="process__heading"><Reveal><h2 className="section__title" id="process-title">From idea<br />to interface</h2></Reveal><p>Design decisions carried through to the browser.</p><Reveal paper className="process__visual"><Image src="/images/off-the-rack/inquiry-wireframe.png" alt="Off The Rack inquiry form wireframe" width={1440} height={1613} sizes="(max-width: 720px) 92vw, 44vw" /></Reveal></div>
-        <div className="process__grid">{process.map((item, i) => <article className="step" key={item.id}><Reveal delay={0.06}><h3 className="step__title">{item.title}</h3></Reveal><Reveal delay={0.13}><p className="step__body">{item.description}</p></Reveal>{i === 2 && <Reveal paper><Image src="/images/off-the-rack/inquiry.jpg" alt="Off The Rack finished inquiry interface" width={1348} height={1848} sizes="(max-width: 720px) 92vw, 44vw" className="process__built-image" /></Reveal>}</article>)}</div>
-      </div>
-    </section>
     <Contact settings={settings} />
   </main>;
 }

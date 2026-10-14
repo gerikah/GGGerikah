@@ -50,21 +50,12 @@ export function CasePreview({ study, width, height }: { study: Pick<CaseStudy, "
     const opener = trigger.current;
     const closingPanel = panel.current;
     const openedUrl = window.location.href;
-    let screenGateRequested = false;
-    let screenGateStarted = siteRoot?.dataset.loading === "true";
-    function recordGate(records: MutationRecord[]) {
-      if (siteRoot?.dataset.loading === "true" || records.some(record => record.attributeName === "data-loading" && record.oldValue === "true")) screenGateStarted = true;
-    }
-    const gateObserver = new MutationObserver(recordGate);
-    if (siteRoot) gateObserver.observe(siteRoot, { attributes: true, attributeFilter: ["data-loading"], attributeOldValue: true });
     const previousOverflow = document.documentElement.style.overflow;
     const wasInert = background?.inert;
     if (background) background.inert = true;
     document.documentElement.style.overflow = "hidden";
     const frame = requestAnimationFrame(() => {
       closeButton.current?.focus();
-      screenGateRequested = true;
-      window.dispatchEvent(new Event("ga:screen-navigation"));
     });
     function key(event: KeyboardEvent) {
       if (event.key === "Escape") { event.preventDefault(); setOpen(false); }
@@ -78,14 +69,11 @@ export function CasePreview({ study, width, height }: { study: Pick<CaseStudy, "
     document.addEventListener("keydown", key);
     return () => {
       cancelAnimationFrame(frame); document.removeEventListener("keydown", key);
-      recordGate(gateObserver.takeRecords());
-      gateObserver.disconnect();
       document.documentElement.style.overflow = previousOverflow;
-      if (background) background.inert = Boolean(wasInert) || document.querySelector(".od-public")?.getAttribute("data-loading") === "true";
+      if (background) background.inert = Boolean(wasInert);
       if (!mounted.current || !restoreFocus.current || !opener || !siteRoot || !background) return;
 
-      // The screen gate and exit animation can outlive the dialog state. Wait
-      // for both owners to release the background before restoring focus.
+      // Keep focus inside the dialog until its exit animation releases the background.
       const observer = new MutationObserver(attemptRestore);
       let cancelled = false;
       function cancel() {
@@ -96,9 +84,8 @@ export function CasePreview({ study, width, height }: { study: Pick<CaseStudy, "
         window.removeEventListener("hashchange", cancel);
         if (cancelFocusRestore.current === cancel) cancelFocusRestore.current = null;
       }
-      function attemptRestore(records: MutationRecord[] = []) {
+      function attemptRestore() {
         if (cancelled) return;
-        recordGate(records);
         if (!mounted.current || !opener!.isConnected || !siteRoot!.isConnected || window.location.href !== openedUrl) {
           cancel();
           return;
@@ -109,7 +96,7 @@ export function CasePreview({ study, width, height }: { study: Pick<CaseStudy, "
           cancel();
           return;
         }
-        if ((screenGateRequested && !screenGateStarted) || dialogs.length || siteRoot!.dataset.loading === "true" || background!.inert || opener!.closest("[inert]")) return;
+        if (dialogs.length || background!.inert || opener!.closest("[inert]")) return;
         if (opener!.disabled || !opener!.getClientRects().length || opener!.closest("[hidden]")) {
           cancel();
           return;
@@ -118,7 +105,7 @@ export function CasePreview({ study, width, height }: { study: Pick<CaseStudy, "
         if (document.activeElement === opener) cancel();
       }
       cancelFocusRestore.current = cancel;
-      observer.observe(siteRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-loading", "inert", "hidden", "aria-modal"], attributeOldValue: true });
+      observer.observe(siteRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ["inert", "hidden", "aria-modal"] });
       window.addEventListener("popstate", cancel);
       window.addEventListener("hashchange", cancel);
       attemptRestore();
