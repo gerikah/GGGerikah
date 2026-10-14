@@ -1,6 +1,8 @@
 # Gerikah — Design Archive
 
-A new black-and-white portfolio for **Gerikah**, UI/UX Designer and Frontend Developer. The published seed contains eight projects identified from the supplied screenshots, wireframes, and diagrams. Marci Metzger Homes remains explicitly an **independent redesign concept**. Source images and the supplied portrait are preserved in `frontend/design/assets/` and copied into `frontend/public/images/` for the portfolio.
+A charcoal portfolio for **Gerikah**, UI/UX Designer and Frontend Developer. The published seed contains eight projects identified from the supplied screenshots, wireframes, and diagrams. Marci Metzger Homes remains explicitly an **independent redesign concept**. Source images and the supplied portrait are preserved in `frontend/design/assets/` and copied into `frontend/public/images/` for the portfolio.
+
+The public interface uses the taste skill’s **Pinned poster** direction: locally hosted Michroma/Manrope typography, the supplied Mosaic Lens hero, real project plates, a wireframe/build comparison, and Gerikah’s charcoal gradient references. Phosphor supplies action icons; locally hosted brand marks identify the CMS tech stack. See [the redesign report](docs/taste-redesign.md) and [logo attribution](docs/technology-logo-attribution.md). The original OpenDesign export remains archived in `frontend/design/opendesign/`.
 
 ## Published project inventory
 
@@ -23,7 +25,7 @@ This repository is a separate replacement project. Develop and deploy it as a ne
 
 - Next.js 16 App Router, React, strict TypeScript, Tailwind CSS, and Framer Motion.
 - Supabase Auth, Postgres with Row-Level Security, and a private Storage bucket.
-- `/`: introduction, about snapshot, CMS-derived tech stack, eight-project work archive, process, and contact.
+- `/`: introduction, design/build comparison, eight-project work archive, about snapshot, CMS-derived tech stack, process, and contact.
 - `/work`: published project archive.
 - `/work/[slug]`: reusable case study assembled from CMS sections and media.
 - `/login`: email/password sign-in; there is no public sign-up page.

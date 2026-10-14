@@ -1,5 +1,7 @@
 # OpenDesign adoption
 
+This report records the original OpenDesign implementation. The later user-requested taste redesign supersedes its public layout and typography; see [taste-redesign.md](taste-redesign.md). The handoff and extracted CSS remain preserved for reference, and the public routes now import `frontend/styles/taste.css`.
+
 Visual source: `frontend/design/opendesign/`.
 
 Read before implementation: `DESIGN-HANDOFF.md`, `DESIGN-MANIFEST.json`, and the complete `index.html`, including both inline scripts, the inline stylesheet, inline SVGs, and responsive/motion rules. The manifest and repository inventory agree: this export has one public screen and no separate CSS, JavaScript, image, or font directories. Its fonts were external Google Fonts links; equivalent Space Grotesk and IBM Plex Mono binaries now load locally through Fontsource.

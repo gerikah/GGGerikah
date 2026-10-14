@@ -25,3 +25,4 @@ database/supabase/.branches/
 playwright-report/
 test-results/
 .local/
+.taste-skill/

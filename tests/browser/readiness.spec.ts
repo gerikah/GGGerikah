@@ -17,8 +17,19 @@ test("branding and CMS toolkit follow the requested section order", async ({ pag
   await expect(page.locator("footer img")).toHaveCount(0);
   await expect(page.locator(".brand-footer__name")).toHaveText("Gerikah");
   const sections = await page.locator("main > section[id]").evaluateAll(nodes => nodes.map(node => node.id));
-  expect(sections).toEqual(["about", "stack", "work", "process", "contact"]);
+  expect(sections).toEqual(["work", "about", "stack", "process", "contact"]);
   expect(await page.locator(".tech-stack__tool").allTextContents()).toEqual(Array.from(new Set(projects.flatMap((project: { tools: string[] }) => project.tools))));
+  // Every currently evidenced tool has a real, locally served brand mark.
+  for (const tool of await page.locator(".tech-stack__tool").all()) {
+    await tool.scrollIntoViewIfNeeded();
+    expect(await tool.locator("img.tech-stack__logo").count()).toBeGreaterThan(0);
+    for (const logo of await tool.locator("img.tech-stack__logo").all()) {
+      await expect(logo).toHaveAttribute("src", /^\/images\/tech\/.+\.svg$/);
+      await expect(logo).toHaveAttribute("alt", "");
+      await expect.poll(() => logo.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+  }
+  await expect(page.locator(".hero .btn svg")).toHaveAttribute("aria-hidden", "true");
   await expect(page.locator("body")).not.toContainText("aldaygerikah@gmail.com");
   await expect(page.locator("body")).not.toContainText("Alday");
   for (const [width, section] of [[1440, "#stack"], [390, "#stack"], [1440, "footer"], [390, "footer"]] as const) {
@@ -106,6 +117,23 @@ for (const project of projects.slice(2)) {
     for (const width of [360, 820, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      await page.evaluate(() => document.fonts.ready);
+      const headingLines = await page.locator(".case-heading h1").evaluate(node => node.getBoundingClientRect().height / parseFloat(getComputedStyle(node).lineHeight));
+      expect(headingLines).toBeLessThanOrEqual(2.01);
+    }
+    if (project.slug === "e-registered-messaging-system") {
+      await page.setViewportSize({ width: 360, height: 900 });
+      await page.goto("/");
+      await ready(page);
+      await page.locator(`[data-project="${project.slug}"]`).getByRole("button", { name: "View case study", exact: true }).click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      const previewHeading = dialog.getByRole("heading", { name: project.title, exact: true });
+      const previewLines = await previewHeading.evaluate(node => node.getBoundingClientRect().height / parseFloat(getComputedStyle(node).lineHeight));
+      expect(previewLines).toBeLessThanOrEqual(2.01);
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
     }
   });
 }

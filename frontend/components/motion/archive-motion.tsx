@@ -84,8 +84,6 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion();
   const router = useRouter();
   const root = useRef<HTMLDivElement>(null);
-  const cursor = useRef<HTMLDivElement>(null);
-  const cursorLabel = useRef<HTMLSpanElement>(null);
   const pending = useRef<PendingGate | null>(null);
   const committedLocation = useRef<string | null>(null);
   const generation = useRef(0);
@@ -112,6 +110,10 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
     function markerReady() {
       if (committedLocation.current !== locationKey(url) || locationKey(new URL(window.location.href)) !== locationKey(url)) return null;
       if (Array.from(container!.querySelectorAll<HTMLElement>("[data-page-loading]")).some(node => node.getClientRects().length > 0)) return null;
+      if (Array.from(container!.querySelectorAll<HTMLElement>("[data-visual-ready='false']")).some(node => {
+        const rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight;
+      })) return null;
       const marker = Array.from(container!.querySelectorAll<HTMLElement>("[data-page-ready]")).find(node => {
         const value = node.dataset.pageReady;
         if (!node.getClientRects().length) return false;
@@ -160,7 +162,7 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
         }
       }
     }
-    observer.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-page-ready", "data-page-loading", "src", "srcset", "style", "hidden"] });
+    observer.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-page-ready", "data-page-loading", "data-visual-ready", "src", "srcset", "style", "hidden"] });
     pending.current = { controller, dispose, check: () => { void check(); }, url, kind: gateKind };
     void check();
   }, []);
@@ -231,21 +233,6 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
     return () => observer.disconnect();
   }, [loading, error]);
 
-  useEffect(() => {
-    const container = root.current;
-    if (!container || reduced || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
-    function move(event: PointerEvent) {
-      if (event.pointerType !== "mouse" || !cursor.current || !cursorLabel.current) return;
-      const target = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-cursor]") : null;
-      cursor.current.style.transform = `translate(${event.clientX}px,${event.clientY}px)`;
-      cursor.current.classList.toggle("is-on", Boolean(target));
-      cursorLabel.current.textContent = target?.dataset.cursor || "";
-    }
-    const hide = () => cursor.current?.classList.remove("is-on");
-    container.addEventListener("pointermove", move); container.addEventListener("pointerleave", hide); document.addEventListener("keydown", hide);
-    return () => { container.removeEventListener("pointermove", move); container.removeEventListener("pointerleave", hide); document.removeEventListener("keydown", hide); };
-  }, [reduced]);
-
   function retry() {
     const url = new URL(failedUrl.current || window.location.href, window.location.origin);
     begin(url, "route");
@@ -265,7 +252,6 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
       <noscript><style>{"html{overflow:auto!important}[data-logo-loader]{display:none!important}.od-public [data-site-content]{opacity:1!important}.od-public [data-reveal],.od-public [data-paper-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}.od-public .mask>span{transform:none!important}"}</style></noscript>
       <AnimatePresence>{(loading || error) && <LogoLoader key="logo-loader" error={error} onRetry={retry} onReturn={returnToReady} />}</AnimatePresence>
       <div className="shutter" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <motion.span key={index} initial={false} animate={{ y: shutter ? "0%" : "-101%" }} transition={{ duration: reduced ? 0 : 0.38, delay: reduced ? 0 : index * 0.026, ease: [0.7, 0, 0.84, 0] }} />)}</div>
-      <div className="cursor" ref={cursor} aria-hidden="true"><span className="cursor__label" ref={cursorLabel} /></div>
     </div>
   </ReadyContext.Provider></TransitionContext.Provider></MotionConfig>;
 }
@@ -291,11 +277,4 @@ export function HeroName({ first }: { first: string }) {
   const reduced = useReducedMotion();
   const ready = useContext(ReadyContext);
   return <h1 className="hero__name" id="hero-name"><span className="mask"><motion.span initial={{ y: "108%" }} animate={{ y: ready ? 0 : "108%" }} transition={{ duration: reduced ? 0 : 0.9, ease: easeOut }}>{first}</motion.span></span></h1>;
-}
-
-export function HeroLabels({ availability }: { availability: string }) {
-  const reduced = useReducedMotion();
-  const ready = useContext(ReadyContext);
-  const labels = [{ text: "Design + Build", style: "solid" }, { text: availability || "Computer Engineer", style: "line" }, { text: "UI/UX / Frontend", style: "stamp" }, { text: String(new Date().getFullYear()), style: "line" }, { text: "Manila, PH", style: "solid" }];
-  return <div className="hero__labels">{labels.map((label, index) => <motion.span key={index} className={`tag tag--${label.style}`} initial={{ opacity: 0 }} animate={{ opacity: ready ? 1 : 0 }} transition={{ duration: reduced ? 0 : 0.6, delay: reduced ? 0 : index * 0.1 }}>{label.text}</motion.span>)}</div>;
 }

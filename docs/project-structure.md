@@ -37,4 +37,6 @@ Keep local configuration in `frontend/.env.local`, which is ignored by Git. Only
 
 Cleanup removed the unimported browser Supabase client, unused compatibility props and `PaperLabel`, old empty module folders, and obsolete generated caches/reports. All 30 served images, original artwork, handoff files, migrations, seed data, scripts, and tests were retained.
 
+The subsequent [taste redesign](taste-redesign.md) uses `frontend/styles/taste.css` for public routes and retains the OpenDesign export/extracted styles as references. Public loading is handled by `ArchiveMotion`; the former automatic public `loading.tsx` was removed so content also renders without JavaScript. Shared globals now contain only the foundation, while CMS form styling stays in `frontend/styles/admin.css`.
+
 After staging a commit, run `npm run privacy:check` to check the actual Git index for private filenames, populated environment templates, and recognizable secret patterns. It reports filenames without printing detected values. Lint, type generation, production build, all 11 validation/privacy tests, and all 30 browser checks passed after this reorganization. Live database access tests still require Supabase configuration.
