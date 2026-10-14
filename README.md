@@ -145,7 +145,7 @@ The original seed screenshots under `frontend/public/images/` are ordinary publi
 1. Push this repository to its own Git repository/branch as appropriate.
 2. Import it into a **new Vercel project**, using the Next.js framework preset and this repository root.
 3. Add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for the environments that should use the new Supabase project. Keep preview content separate from production if needed by using a separate Supabase project.
-4. Build from the repository root with `npm run build`, set the Output Directory to `frontend/.next`, and deploy to the new project's Vercel preview domain. Vercel supports overriding the build command and output directory in [project configuration](https://vercel.com/docs/project-configuration/vercel-json#outputdirectory). Hosting deployment was not performed during the local folder reorganization.
+4. Keep Vercel's Root Directory at the repository root (leave it blank). The committed `vercel.json` selects Next.js, runs `npm run build`, and sets the Output Directory to `frontend/.next`, where `next build frontend` writes its manifests. These values override the corresponding dashboard settings through [project configuration](https://vercel.com/docs/project-configuration/vercel-json#outputdirectory). Deploy to the new project's Vercel preview domain.
 5. Update Supabase's Auth site URL for the new deployment, then verify public pages, login, admin access, publishing, and uploads.
 
 Keep the existing portfolio's Vercel project and domain mapping as they are while reviewing this replacement. Switch a custom domain only when this version is ready. Database migrations and seed initialization are explicit setup steps; Vercel does not run them during the application build.
