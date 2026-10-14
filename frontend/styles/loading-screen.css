@@ -1,0 +1,15 @@
+.logo-loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#080808;color:#f2f0ea;padding:24px;pointer-events:auto}
+.logo-loader__content{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:450px}
+.logo-loader__mark{width:96px;height:auto;display:block;object-fit:contain}
+.logo-loader__rule{width:52px;height:1px;background:#8c8c8c;margin:28px 0 20px}
+.logo-loader__status{font-family:var(--font-mono),monospace;font-size:10px;line-height:1.7;letter-spacing:.13em;text-transform:uppercase;margin:0}
+.logo-loader__detail{font-size:13px;line-height:1.7;color:#8c8c8c;margin-top:12px}
+.logo-loader__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:26px}
+.logo-loader__actions button{border:1px solid #8c8c8c;background:transparent;color:#f2f0ea;padding:11px 14px;font-family:var(--font-mono),monospace;font-size:10px;line-height:1.5;letter-spacing:.08em;cursor:pointer}
+.logo-loader__actions button:hover{background:#f2f0ea;color:#080808}
+.logo-loader__actions button:focus-visible{outline:2px solid #fff;outline-offset:5px}
+.od-public [data-site-content]{transition:opacity .12s ease}
+.od-public[data-loading=true] .cursor{display:none}
+/* Keep the viewport being decoded stable while the screen is covered. Layout remains measurable. */
+html:has(.od-public[data-loading=true]){overflow:hidden}
+@media(prefers-reduced-motion:reduce){.od-public [data-site-content]{transition:none}}

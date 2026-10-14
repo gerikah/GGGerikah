@@ -1,1 +1,0 @@
-export default function Loading() { return <main id="main-content" className="loading-page section-wrap" aria-busy="true"><span className="mono">OPENING THE ARCHIVE</span><p>One moment<span className="loading-dot">.</span></p></main>; }

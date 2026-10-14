@@ -9,7 +9,7 @@ import test from "node:test";
 // TypeScript is already a development dependency; this also works on Node 20.
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
-const validationPath = fileURLToPath(new URL("../lib/validations/cms.ts", import.meta.url));
+const validationPath = fileURLToPath(new URL("../api/validation/cms.ts", import.meta.url));
 const compiled = ts.transpileModule(readFileSync(validationPath, "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
@@ -18,7 +18,7 @@ validationModule.filename = validationPath;
 validationModule.paths = Module._nodeModulePaths(dirname(validationPath));
 validationModule._compile(compiled, validationPath);
 const { externalUrl, projectSchema, settingsSchema, sectionSchema, mediaSchema } = validationModule.exports;
-const seed = JSON.parse(readFileSync(new URL("../lib/cms/seed-data.json", import.meta.url), "utf8"));
+const seed = JSON.parse(readFileSync(new URL("../database/seed-data.json", import.meta.url), "utf8"));
 
 test("initial public copy survives UTF-8 ingestion without broken punctuation", () => {
   const content = JSON.stringify(seed);
