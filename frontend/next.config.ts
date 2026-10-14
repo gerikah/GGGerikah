@@ -3,8 +3,8 @@ import path from "node:path";
 
 const repositoryRoot = path.resolve(__dirname, "..");
 
-const storageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+const storageHost = process.env.SUPABASE_URL
+  ? new URL(process.env.SUPABASE_URL).hostname
   : null;
 
 const config: NextConfig = {

@@ -11,7 +11,7 @@ export async function resolveMediaUrl(path: string, supabase: SupabaseClient): P
   let storagePath = path;
   if (/^https?:\/\//i.test(path)) {
     const parsed = new URL(path);
-    const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const configuredUrl = process.env.SUPABASE_URL;
     if (!configuredUrl || parsed.origin !== new URL(configuredUrl).origin) return path;
     const prefix = `/storage/v1/object/`;
     const match = parsed.pathname.match(new RegExp(`^${prefix}(?:public|sign|authenticated)/${MEDIA_BUCKET}/(.+)$`));

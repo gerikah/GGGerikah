@@ -2,7 +2,7 @@
 
 1. Create a new Supabase project for this portfolio.
 2. In SQL Editor, run the files in `database/supabase/migrations/` in filename order, then run `database/supabase/seed.sql`. The seed adds missing records and preserves existing CMS edits.
-3. Copy `frontend/.env.example` to `frontend/.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` using the project's Connect dialog. Use the publishable key, not an elevated secret/service-role key. [Supabase API key documentation](https://supabase.com/docs/guides/getting-started/api-keys).
+3. Copy `frontend/.env.example` to `frontend/.env.local`. Set `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` using the project's Connect dialog. The CMS uses the publishable key with session cookies and RLS. Optional SUPABASE_SECRET_KEY and SUPABASE_JWKS_URL values stay server-side and are not used by these clients. [Supabase API key documentation](https://supabase.com/docs/guides/getting-started/api-keys).
 4. In Supabase Authentication, disable public sign-ups and create/confirm your administrator user with a strong password. Run this in SQL Editor using the user's actual Auth UUID:
 
 ```sql

@@ -14,7 +14,7 @@ test("private environment, credential, and generated files are excluded from Git
 test("the committed environment template contains names without credentials", () => {
   const template = readFileSync("frontend/.env.example", "utf8");
   const values = template.split(/\r?\n/).filter(line => line.trim() && !line.trim().startsWith("#"));
-  assert.deepEqual(values, ["NEXT_PUBLIC_SUPABASE_URL=", "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="]);
+  assert.deepEqual(values, ["SUPABASE_URL=", "SUPABASE_PUBLISHABLE_KEY=", "SUPABASE_SECRET_KEY=", "SUPABASE_JWKS_URL="]);
 });
 
 test("CMS write actions authenticate before database or storage operations", () => {

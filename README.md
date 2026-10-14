@@ -45,11 +45,11 @@ On Windows PowerShell, if script execution policy blocks `npm.ps1`, run the same
 Copy `frontend/.env.example` to `frontend/.env.local`, then fill in the values from the new Supabase project's API settings:
 
 ```dotenv
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_URL=
+SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Only these two environment variables are required. The publishable key is intended for client use; permissions are enforced by the authenticated session and RLS. Do not add a service-role or secret key to a `NEXT_PUBLIC_` variable. `frontend/.env.local` is ignored by Git. Restart the development server after changing environment values.
+Only the URL and publishable key are required. The template also has optional private SECRET_KEY and JWKS_URL entries; neither is used by the CMS's RLS-protected clients. These variables are read on the server, without NEXT_PUBLIC prefixes. The publishable key is intended for client use; permissions are enforced by the authenticated session and RLS. Do not add a service-role or secret key to a `NEXT_PUBLIC_` variable. `frontend/.env.local` is ignored by Git. Restart the development server after changing environment values.
 
 The verification commands are:
 
@@ -142,7 +142,7 @@ The original seed screenshots under `frontend/public/images/` are ordinary publi
 
 1. Push this repository to its own Git repository/branch as appropriate.
 2. Import it into a **new Vercel project**, using the Next.js framework preset and this repository root.
-3. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for the environments that should use the new Supabase project. Keep preview content separate from production if needed by using a separate Supabase project.
+3. Add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for the environments that should use the new Supabase project. Keep preview content separate from production if needed by using a separate Supabase project.
 4. Build from the repository root with `npm run build`, set the Output Directory to `frontend/.next`, and deploy to the new project's Vercel preview domain. Vercel supports overriding the build command and output directory in [project configuration](https://vercel.com/docs/project-configuration/vercel-json#outputdirectory). Hosting deployment was not performed during the local folder reorganization.
 5. Update Supabase's Auth site URL for the new deployment, then verify public pages, login, admin access, publishing, and uploads.
 
