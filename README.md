@@ -2,7 +2,7 @@
 
 A charcoal portfolio for **Gerikah**, UI/UX Designer and Frontend Developer. The published seed contains eight projects identified from the supplied screenshots, wireframes, and diagrams. Marci Metzger Homes remains explicitly an **independent redesign concept**. Source images and the supplied portrait are preserved in `frontend/design/assets/` and copied into `frontend/public/images/` for the portfolio.
 
-The public interface is a dark editorial archive with locally hosted Manrope and IBM Plex Mono. Off The Rack leads with a wireframe/interface toggle; Marci Metzger Homes and Ground Control Station have distinct compositions. Actual inquiry and admin screens provide design-to-build evidence. The remaining work is collected in a compact `/work` index. Navigation stays visible without loading overlays. See [the redesign report](docs/taste-redesign.md). The original OpenDesign export and technology artwork remain archived.
+The public interface is a dark editorial archive with locally hosted Manrope and IBM Plex Mono. A project-neutral hero introduces Gerikah through the personal mark; a short project index then leads into Off The Rack's wireframe/interface toggle. Marci Metzger Homes and Ground Control Station keep distinct compositions. Original-colour inquiry and admin screens provide design-to-build evidence, followed by an eight-stage workflow and an SVG technology toolbox. The remaining work is collected in a compact `/work` index. Sticky logo navigation stays visible without loading overlays. See the [focused v2 report](docs/focused-v2.md) and [original redesign report](docs/taste-redesign.md). The original OpenDesign export and artwork remain archived.
 
 ## Published project inventory
 
@@ -25,7 +25,7 @@ This repository is a separate replacement project. Develop and deploy it as a ne
 
 - Next.js 16 App Router, React, strict TypeScript, Tailwind CSS, and Framer Motion.
 - Supabase Auth, Postgres with Row-Level Security, and a private Storage bucket.
-- `/`: project index, featured Off The Rack comparison, two selected studies, actual design/build evidence, short about note, project-linked toolbox, contact, and complete archive link.
+- `/`: project-neutral introduction, below-fold project index, featured Off The Rack comparison, two selected studies, actual design/build evidence, connected workflow, short about note, project-linked SVG toolbox, contact, and complete archive link.
 - `/work`: compact index of all published projects with direct case-study links.
 - `/work/[slug]`: reusable case study assembled from CMS sections and media.
 - `/login`: email/password sign-in; there is no public sign-up page.

@@ -28,7 +28,7 @@ export default async function WorkPage() {
             <Link className="archive-index__row" href={`/work/${project.slug}`}>
               <span className="archive-index__number">{String(project.project_number).padStart(2, "0")}</span>
               <span className="archive-index__image">
-                {project.cover_image_url && <Image src={project.cover_image_url} alt={project.cover_alt} width={dimensions.width} height={dimensions.height} sizes="160px" />}
+                {project.cover_image_url && <Image className="project-cover" src={project.cover_image_url} alt={project.cover_alt} width={dimensions.width} height={dimensions.height} sizes="160px" />}
               </span>
               <div className="archive-index__copy">
                 <h2 className="archive-index__title">{project.title}</h2>

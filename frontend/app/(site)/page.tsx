@@ -6,7 +6,8 @@ import { getCapabilities, getProjects, getSiteSettings } from "@backend/cms/data
 import { Contact } from "@frontend/components/layout/footer";
 import { TechStack } from "@frontend/components/home/tech-stack";
 import { DesignProof } from "@frontend/components/home/design-proof";
-import storefront from "@frontend/public/images/off-the-rack/home.jpg";
+import { Workflow } from "@frontend/components/home/workflow";
+import personalMark from "@frontend/public/images/logo-white.png";
 import marciScreen from "@frontend/public/images/marci/homepage.png";
 import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
 import mobileDashboard from "@frontend/public/images/ground-control-station/mobile-dashboard.png";
@@ -32,26 +33,20 @@ export default async function HomePage() {
 
   return <main id="main-content" className="portfolio-home" data-page-ready="/">
     <section className="editorial-hero wrap" aria-labelledby="hero-title">
-      <div className="editorial-hero__meta meta"><span>Interface design + frontend</span><span>Manila, PH</span></div>
+      <div className="editorial-hero__meta meta"><span>Gerikah Alday<br />UI/UX Designer + Frontend Developer</span><span>Manila, PH</span></div>
       <div className="editorial-hero__layout">
         <div className="editorial-hero__copy">
           <h1 id="hero-title">I design it.<br />Then I build it.</h1>
           <p>{settings.hero_supporting_copy}</p>
-          <Link className="btn" href={selected.length ? "#work" : "/work"}>Browse selected work<ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
+          <Link className="btn" href={selected.length ? "#selected-work" : "/work"}>Browse selected work<ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
         </div>
-        {offTheRack && <figure className="hero-artifact">
-          <div className="hero-artifact__label meta"><span>01 / Off The Rack</span><span>Built interface</span></div>
-          <Link className="hero-artifact__crop" href="/work/off-the-rack" aria-label="Explore Off The Rack">
-            <Image src={storefront} alt="Off The Rack storefront collection of one-of-one clothing pieces" sizes="(max-width: 720px) 88vw, 44vw" preload placeholder="blur" />
-          </Link>
-          <figcaption><span className="meta">From the archive</span><span>A wireframe, a storefront,<br />and the data behind it.</span></figcaption>
-        </figure>}
+        <div className="hero-mark" aria-hidden="true"><div className="hero-mark__frame hero-mark__frame--wide"><span className="hero-mark__line" /><Image src={personalMark} alt="" className="hero-mark__logo" sizes="(max-width: 720px) 132px, 280px" preload /></div><div className="hero-mark__frame hero-mark__frame--narrow"><span className="hero-mark__line" /><span className="hero-mark__column" /><span className="hero-mark__column" /></div></div>
       </div>
-      {selected.length > 0 && <nav className="hero-index" aria-label="Selected project index">
-        <p className="hero-index__label meta">Selected work</p>
-        <ol>{selected.map(item => <li key={item.slug}><Link href={`#${item.target}`}><span className="hero-index__number meta">{item.number}</span><span><strong>{item.project.title}</strong><small>{item.label}</small></span><ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></li>)}</ol>
-      </nav>}
     </section>
+    {selected.length > 0 && <section id="selected-work" className="selected-bridge wrap" aria-labelledby="selected-index-title"><nav className="hero-index" aria-label="Selected project index">
+        <h2 id="selected-index-title" className="hero-index__label meta">Selected work</h2>
+        <ol>{selected.map(item => <li key={item.slug}><Link href={`#${item.target}`}><span className="hero-index__number meta">{item.number}</span><span><strong>{item.project.title}</strong><small>{item.label}</small></span><ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></li>)}</ol>
+      </nav></section>}
 
     {!offTheRack && <div id="work" />}
     {offTheRack && <section id="work" className="featured-project wrap" aria-labelledby="featured-title">
@@ -61,7 +56,7 @@ export default async function HomePage() {
       <div className="featured-project__footnote"><p className="meta">Design → interface → working product</p><p>Product browsing, custom inquiries, and an admin interface connected to Supabase.</p></div>
     </section>}
 
-    {(marci || groundControl) && <section id="selected-work" className="selected-work wrap" aria-labelledby="selected-title">
+    {(marci || groundControl) && <section id="other-work" className="selected-work wrap" aria-labelledby="selected-title">
       {/* taste-skill-ignore: real project index labels requested in the brief. */}
       <div className="selected-work__heading"><h2 id="selected-title">{marci && groundControl ? "Two other ways of thinking." : "Another way of thinking."}</h2><p className="meta">Selected work / {marci && groundControl ? "02—03" : marci ? "02" : "03"}</p></div>{/* taste-skill-ignore: requested index. */}
       {marci && <article id="marci" className="marci-study" aria-labelledby="marci-title">
@@ -84,6 +79,7 @@ export default async function HomePage() {
       <Link className="text-link" href="/work/off-the-rack">See how the pieces connect<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
     </section>}
 
+    <Workflow projects={projects} />
     <section id="about" className="about-note wrap" aria-labelledby="about-title">
       <div><p className="meta">A little about me</p><h2 id="about-title">Both sides<br />of the screen.</h2></div>
       <div className="about-note__body"><p className="about-note__bio">{settings.bio}</p><p className="about-note__signature">Gerikah Alday<span className="meta">Computer Engineer · Manila, PH</span></p><ul className="about-note__capabilities" aria-label="Capabilities">{capabilities.filter(item => item.kind === "capability").map(item => <li key={item.id}>{item.title}</li>)}</ul></div>

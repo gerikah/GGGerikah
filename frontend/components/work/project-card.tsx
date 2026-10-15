@@ -12,7 +12,7 @@ export async function ProjectCard({ project, compact = false }: { project: Proje
   return <article className="project" data-name={project.title} data-project={project.slug}>
     <ProjectLink href={`/work/${project.slug}`} className="project__visual" label={`View ${project.title} case study`} cursor="VIEW PROJECT">
       <Reveal paper className="project__frame">
-        {project.cover_image_url ? <Image src={project.cover_image_url} alt={project.cover_alt} width={dimensions.width} height={dimensions.height} sizes={compact ? "(max-width: 720px) 94vw, (max-width: 1920px) 48vw, 900px" : "(max-width: 1920px) 94vw, 1800px"} className="project__cover" /> : <div className="project__fallback"><p>A visual is being prepared for {project.title}.</p></div>}
+        {project.cover_image_url ? <Image src={project.cover_image_url} alt={project.cover_alt} width={dimensions.width} height={dimensions.height} sizes={compact ? "(max-width: 720px) 94vw, (max-width: 1920px) 48vw, 900px" : "(max-width: 1920px) 94vw, 1800px"} className="project__cover project-cover" /> : <div className="project__fallback"><p>A visual is being prepared for {project.title}.</p></div>}
       </Reveal>
     </ProjectLink>
     <Reveal className="project__info" delay={0.08}>

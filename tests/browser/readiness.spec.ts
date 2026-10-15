@@ -20,8 +20,8 @@ for (const width of [1440, 390]) {
       inspect();
     });
     await page.locator(".editorial-hero").getByRole("link", { name: "Browse selected work", exact: true }).click();
-    await expect(page).toHaveURL(/#work$/);
-    await expect(page.locator("#work")).toBeInViewport();
+    await expect(page).toHaveURL(/#selected-work$/);
+    await expect(page.locator("#selected-work")).toBeInViewport();
     await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Contact", exact: true }).click();
     await expect(page).toHaveURL(/#contact$/);
     await expect(page.locator("#contact")).toBeInViewport();

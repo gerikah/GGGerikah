@@ -30,19 +30,21 @@ for (const [width, height] of [[1440, 900], [768, 1024], [390, 844]]) {
     await visibleContent(page);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/I design it\.\s*Then I build it\./);
     const sections = await page.locator("main > section[id]").evaluateAll(nodes => nodes.map(node => node.id));
-    expect(sections).toEqual(["work", "selected-work", "process", "about", "stack", "contact"]);
+    expect(sections).toEqual(["selected-work", "work", "other-work", "process", "workflow", "about", "stack", "contact"]);
     await expect(page.locator("#work")).toContainText("Off The Rack");
-    await expect(page.locator("#selected-work")).toContainText("Marci Metzger Homes");
-    await expect(page.locator("#selected-work")).toContainText("Ground Control Station");
+    await expect(page.locator("#other-work")).toContainText("Marci Metzger Homes");
+    await expect(page.locator("#other-work")).toContainText("Ground Control Station");
     await expect(page.locator("#process img")).not.toHaveCount(0);
     await expect(page.locator(".step, .mosaic-lens, .hero__name")).toHaveCount(0);
     await expect(page.locator("#about")).toContainText(/Computer Engineer/i);
     await expect(page.locator("#stack")).toContainText("Toolbox");
+    const toolLabels: Record<string, string> = { HTML5: "HTML", CSS3: "CSS", "Node.js": "Node/npm", npm: "Node/npm" };
     const evidencedTools = new Set(publishedProjects.flatMap((project: { tools: string[] }) => project.tools));
     const toolboxLinks = page.locator("#stack li a");
     expect(await toolboxLinks.count()).toBeGreaterThan(0);
     for (const tool of await toolboxLinks.all()) {
-      expect(evidencedTools.has((await tool.innerText()).trim())).toBe(true);
+      const label = (await tool.locator(".toolbox__label").innerText()).trim();
+      expect(evidencedTools.has(toolLabels[label] ?? label)).toBe(true);
       await expect(tool).toHaveAttribute("href", /^\/work\/[a-z0-9-]+$/);
     }
     await page.evaluate(() => document.fonts.ready);
@@ -151,6 +153,12 @@ test.describe("portfolio without JavaScript", () => {
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(/I design it\.\s*Then I build it\./);
       await loadedImage(page.locator(".project-switch").getByRole("img", { name: /Built Off The Rack storefront/ }));
       await loadedImage(page.locator("#process").getByRole("img", { name: /Early Off The Rack inquiry wireframe/ }));
+      const header = page.locator("header.nav");
+      await expect(header).toHaveCSS("background-color", "rgb(13, 13, 13)");
+      const headerBounds = await header.boundingBox();
+      expect(headerBounds).not.toBeNull();
+      expect(headerBounds!.y).toBeGreaterThanOrEqual(-1);
+      expect(headerBounds!.y).toBeLessThanOrEqual(1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
       await page.locator("footer a[href='/work']").first().click();
       await expect(page).toHaveURL(/\/work$/);

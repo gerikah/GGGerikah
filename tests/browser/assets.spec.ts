@@ -14,6 +14,18 @@ for (const project of projects) {
     await expect(cover).toHaveAttribute("alt", project.cover_alt);
     await expect.poll(() => cover.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     await expect(page.locator(".case-summary")).toContainText(project.overview);
+    for (const image of await page.locator(".case-hero-image, .gallery-image").all()) {
+      const filters = await image.evaluate(node => {
+        const filters: string[] = [];
+        let element: Element | null = node;
+        while (element) {
+          filters.push(getComputedStyle(element).filter);
+          element = element.parentElement;
+        }
+        return filters;
+      });
+      expect(filters.every(filter => filter === "none" || filter === "grayscale(0)")).toBe(true);
+    }
     await expect(page.locator("[data-site-content]")).toHaveCSS("opacity", "1");
     await expect(page.locator("[data-logo-loader]")).toHaveCount(0);
     for (const width of [1440, 390]) {
