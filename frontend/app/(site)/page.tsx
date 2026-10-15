@@ -7,7 +7,8 @@ import { Contact } from "@frontend/components/layout/footer";
 import { TechStack } from "@frontend/components/home/tech-stack";
 import { DesignProof } from "@frontend/components/home/design-proof";
 import { Workflow } from "@frontend/components/home/workflow";
-import personalMark from "@frontend/public/images/logo-white.png";
+import { SelectedIndex } from "@frontend/components/home/selected-index";
+import { HeroMark } from "@frontend/components/home/hero-mark";
 import marciScreen from "@frontend/public/images/marci/homepage.png";
 import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
 import mobileDashboard from "@frontend/public/images/ground-control-station/mobile-dashboard.png";
@@ -40,13 +41,10 @@ export default async function HomePage() {
           <p>{settings.hero_supporting_copy}</p>
           <Link className="btn" href={selected.length ? "#selected-work" : "/work"}>Browse selected work<ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link>
         </div>
-        <div className="hero-mark" aria-hidden="true"><div className="hero-mark__frame hero-mark__frame--wide"><span className="hero-mark__line" /><Image src={personalMark} alt="" className="hero-mark__logo" sizes="(max-width: 720px) 132px, 280px" preload /></div><div className="hero-mark__frame hero-mark__frame--narrow"><span className="hero-mark__line" /><span className="hero-mark__column" /><span className="hero-mark__column" /></div></div>
+        <HeroMark />
       </div>
     </section>
-    {selected.length > 0 && <section id="selected-work" className="selected-bridge wrap" aria-labelledby="selected-index-title"><nav className="hero-index" aria-label="Selected project index">
-        <h2 id="selected-index-title" className="hero-index__label meta">Selected work</h2>
-        <ol>{selected.map(item => <li key={item.slug}><Link href={`#${item.target}`}><span className="hero-index__number meta">{item.number}</span><span><strong>{item.project.title}</strong><small>{item.label}</small></span><ArrowDownRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></li>)}</ol>
-      </nav></section>}
+    {selected.length > 0 && <SelectedIndex projects={selected.map(item => ({ slug: item.slug, number: item.number, title: item.project.title, label: item.label, target: item.target }))} />}
 
     {!offTheRack && <div id="work" />}
     {offTheRack && <section id="work" className="featured-project wrap" aria-labelledby="featured-title">

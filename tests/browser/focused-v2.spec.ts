@@ -60,9 +60,10 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
     await expect(hero.getByRole("heading", { name: "Selected work", exact: true })).toHaveCount(0);
     await expect(hero.locator("a[href^='/work/']")).toHaveCount(0);
     await expect(hero.locator("img[src*='off-the-rack'], img[src*='marci'], img[src*='ground-control']")).toHaveCount(0);
-    const personalMark = hero.locator("img");
+    const personalMark = hero.locator(".hero-mark__logo");
     await expect(personalMark).toHaveCount(1);
     await expect(personalMark).toHaveAttribute("src", /logo-white/);
+    for (const layer of await hero.locator("img").all()) await expect(layer).toHaveAttribute("src", /logo-white/);
     await expect.poll(() => personalMark.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     const bridge = page.locator("#selected-work");
     const bridgeBounds = await bridge.boundingBox();
@@ -161,7 +162,7 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     const workflow = page.locator("#workflow");
-    await expect(workflow.getByRole("heading", { level: 2 })).toHaveText(/How I take work from idea to release|From brief to browser/);
+    await expect(workflow.getByRole("heading", { level: 2 })).toHaveText(/From brief\s*to browser/);
     const headings = workflow.getByRole("heading", { level: 3 });
     await expect(headings).toHaveText(workflowLabels);
     expect(await workflow.evaluate(node => node.previousElementSibling?.id)).toBe("process");
@@ -194,7 +195,7 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
   });
 }
 
-test("desktop covers reveal original colour on hover and keyboard focus without zooming", async ({ page }) => {
+test("desktop covers reveal original colour and a small lift on hover and keyboard focus without zooming", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/work");
   const cover = page.locator(".archive-index__row .project-cover").first();
@@ -206,12 +207,19 @@ test("desktop covers reveal original colour on hover and keyboard focus without 
   expect(duration).toBeLessThanOrEqual(0.3);
   await link.hover();
   await expect(cover).toHaveCSS("filter", "grayscale(0)");
-  await expect(cover).toHaveCSS("transform", "none");
+  await expect.poll(() => cover.evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m42)).toBeLessThanOrEqual(-4);
+  const hover = await cover.evaluate(node => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform);
+    return { xScale: matrix.m11, yScale: matrix.m22, lift: matrix.m42 };
+  });
+  expect(hover.xScale).toBe(1);
+  expect(hover.yScale).toBe(1);
+  expect(hover.lift).toBeGreaterThanOrEqual(-6);
   await page.mouse.move(0, 0);
   await expect(cover).toHaveCSS("filter", "grayscale(1)");
   await link.focus();
   await expect(cover).toHaveCSS("filter", "grayscale(0)");
-  await expect(cover).toHaveCSS("transform", "none");
+  await expect.poll(() => cover.evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m42)).toBeLessThanOrEqual(-4);
   await page.goto("/");
   await expectOriginalColour(page.locator(".project-switch img, #other-work img, #process img"));
   await page.goto("/work/off-the-rack");
