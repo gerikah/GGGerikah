@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowDownRightIcon } from "@phosphor-icons/react/dist/ssr/ArrowDownRight";
 import storefront from "@frontend/public/images/off-the-rack/home.jpg";
-import marci from "@frontend/public/images/marci/homepage.png";
+import taskMate from "@frontend/public/images/task-mate/showcase.png";
 import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
 
 type SelectedProject = {
@@ -18,7 +18,7 @@ type SelectedProject = {
 
 const previews = {
   "off-the-rack": storefront,
-  "marci-metzger-homes": marci,
+  "task-mate": taskMate,
   "ground-control-station": dashboard,
 };
 
@@ -70,7 +70,7 @@ export function SelectedIndex({ projects }: { projects: SelectedProject[] }) {
         </ol>
         <div className="hero-index__preview" aria-hidden="true" data-active={preview ? "true" : undefined} data-project={preview ? activeSlug : undefined}>
           {preview && <>
-            <Image key={activeSlug} src={preview} alt="" className="hero-index__preview-image" fill sizes="320px" loading="lazy" placeholder="blur" />
+            <div className="hero-index__preview-media"><Image key={activeSlug} src={preview} alt="" className="hero-index__preview-image" fill sizes="320px" loading="lazy" placeholder="blur" /></div>
             <span className="hero-index__preview-caption meta">{activeProject?.title}</span>
           </>}
         </div>

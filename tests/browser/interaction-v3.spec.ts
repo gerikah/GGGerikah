@@ -99,7 +99,7 @@ test("selected index defers previews until exploration and supports keyboard ins
     await row.focus();
     await expectFocusIndicator(row);
     const preview = index.locator(".hero-index__preview img");
-    await expect(index.locator(".hero-index__preview")).toHaveAttribute("data-project", ["off-the-rack", "marci-metzger-homes", "ground-control-station"][i]);
+    await expect(index.locator(".hero-index__preview")).toHaveAttribute("data-project", ["off-the-rack", "task-mate", "ground-control-station"][i]);
     await expect(index.locator(".hero-index__preview-caption")).toHaveText(await row.locator("strong").innerText());
     await expect(preview).toBeVisible();
     await expect.poll(() => preview.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
@@ -108,6 +108,11 @@ test("selected index defers previews until exploration and supports keyboard ins
       return { url: image.currentSrc, srcset: image.srcset, alt: image.alt, filter: getComputedStyle(image).filter };
     });
     expect(image.filter).toMatch(/^(none|grayscale\(0\))$/);
+    if (i === 1) {
+      await expect(row).toHaveAttribute("href", "#task-mate");
+      expect(decodeURIComponent(image.url)).toMatch(/showcase(?:\.[a-z0-9_-]+)?\.png/);
+      expect(decodeURIComponent(image.url)).not.toContain("wireframe");
+    }
     if (i === 0) {
       // Chromium may reuse the larger storefront image already needed by the main
       // project. Preview-size variants must not add any initial image requests.
@@ -123,7 +128,10 @@ test("selected index defers previews until exploration and supports keyboard ins
     }
   }
   await rows.nth(1).hover();
-  await expect(index.locator(".hero-index__preview-caption")).toHaveText("Marci Metzger Homes");
+  await expect(index.locator(".hero-index__preview-caption")).toHaveText("Task Mate");
+  await rows.nth(1).click();
+  await expect(page).toHaveURL(/#task-mate$/);
+  await expect(page.locator("#task-mate")).toBeInViewport();
   await rows.first().focus();
   const destination = await rows.first().getAttribute("href");
   expect(destination).toMatch(/^#.+/);

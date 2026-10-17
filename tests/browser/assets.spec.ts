@@ -14,6 +14,31 @@ for (const project of projects) {
     await expect(cover).toHaveAttribute("alt", project.cover_alt);
     await expect.poll(() => cover.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     await expect(page.locator(".case-summary")).toContainText(project.overview);
+    if (project.slug === "task-mate") {
+      const gallery = page.locator(".gallery-image");
+      await expect(gallery).toHaveCount(9);
+      const sources = await gallery.evaluateAll(nodes => nodes.map(node => {
+        const image = node as HTMLImageElement;
+        const url = new URL(image.src);
+        const source = new URL(url.searchParams.get("url") ?? url.href, location.href);
+        const path = decodeURIComponent(source.pathname);
+        return path.slice(path.indexOf("/images/task-mate/"));
+      }));
+      expect(sources).toEqual([
+        "/images/task-mate/Welcome Screen.png",
+        "/images/task-mate/Welcome Screen 1.png",
+        "/images/task-mate/Welcome Screen 2.png",
+        "/images/task-mate/Login Screen.png",
+        "/images/task-mate/Register Screen.png",
+        "/images/task-mate/Homescreen.png",
+        "/images/task-mate/Calendar.png",
+        "/images/task-mate/Stats.png",
+        "/images/task-mate/Profile.png",
+      ]);
+      await expect(cover).toHaveAttribute("src", /showcase\.png/);
+      const allSources = await page.locator("main img").evaluateAll(nodes => nodes.map(node => decodeURIComponent((node as HTMLImageElement).src)));
+      expect(allSources.some(source => /task-mate\/wireframe/i.test(source))).toBe(false);
+    }
     for (const image of await page.locator(".case-hero-image, .gallery-image").all()) {
       const filters = await image.evaluate(node => {
         const filters: string[] = [];
@@ -45,10 +70,10 @@ for (const width of [1440, 390]) {
   test(`case hero and full galleries load visibly with motion enabled at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "no-preference" });
-    for (const slug of ["off-the-rack", "marci-metzger-homes"]) {
+    for (const slug of ["off-the-rack", "marci-metzger-homes", "task-mate"] as const) {
       await page.goto(`/work/${slug}`);
       const images = page.locator(".case-hero-image, .gallery-image");
-      await expect(images).toHaveCount(slug === "off-the-rack" ? 8 : 3);
+      await expect(images).toHaveCount({ "off-the-rack": 8, "marci-metzger-homes": 3, "task-mate": 10 }[slug]);
       for (const image of await images.all()) {
         await image.scrollIntoViewIfNeeded();
         await expect(image).toBeVisible();

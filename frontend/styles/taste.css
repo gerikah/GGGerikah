@@ -94,7 +94,10 @@
 .od-public .hero-index__entry[data-active=true] .ui-icon {transform:translate(4px,-2px);color:var(--ink)}
 .od-public .hero-index__preview {position:relative;height:208px;opacity:0;transform:translateY(6px);transition:opacity 300ms ease,transform 300ms var(--ease);pointer-events:none;background:var(--surface)}
 .od-public .hero-index__preview[data-active=true] {opacity:1;transform:none}
+.od-public .hero-index__preview-media {position:absolute;inset:0}
 .od-public .hero-index__preview-image {object-fit:cover;object-position:top}
+.od-public .hero-index__preview[data-project=task-mate] .hero-index__preview-media {inset:0 0 38px}
+.od-public .hero-index__preview[data-project=task-mate] .hero-index__preview-image {object-fit:contain;object-position:center}
 .od-public .hero-index__preview-caption {position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:var(--bg);font-size:13px;color:var(--muted)}
 .od-public .hero-index li>a:hover {text-decoration:none}
 .od-public .hero-index li>a:hover strong {text-decoration:underline;text-underline-offset:.3em}
@@ -125,15 +128,14 @@
 .od-public .selected-work {padding-block:64px 96px}
 .od-public .selected-work__heading {display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:50px}
 .od-public .selected-work__heading h2 {font-size:var(--lead);letter-spacing:-.025em}
-.od-public .marci-study {display:grid;grid-template-columns:2fr 1fr;gap:6vw;align-items:center}
-.od-public .marci-study__image {background:var(--surface-light)}
-.od-public .marci-study__image img {width:100%;height:auto;aspect-ratio:1.45;object-fit:cover;object-position:center}
-.od-public .marci-study__copy h3 {font-size:var(--lead);max-width:14ch;margin-block:18px 26px}
-.od-public .marci-study__copy>p:not(.meta,.concept-label,.marci-study__description) {font-size:var(--lead);line-height:1.4;letter-spacing:-.025em}
-.od-public .marci-study__description {font-size:16px;color:var(--muted);margin-top:20px;max-width:35ch}
+.od-public .taskmate-study {display:grid;grid-template-columns:2fr 1fr;gap:6vw;align-items:center}
+.od-public .taskmate-study__thumbnail {display:block;background:var(--surface)}
+.od-public .taskmate-study__thumbnail img {display:block;width:100%;height:auto;object-fit:contain}
+.od-public .taskmate-study__copy h3 {font-size:var(--lead);max-width:14ch;margin-block:18px 26px}
+.od-public .taskmate-study__copy>p:not(.meta,.taskmate-study__description) {font-size:var(--lead);line-height:1.4;letter-spacing:-.025em}
+.od-public .taskmate-study__description {font-size:16px;color:var(--muted);margin-top:20px;max-width:35ch}
 .od-public .concept-label {font-size:13px;line-height:1.6;color:var(--muted)}
-.od-public .marci-study .concept-label {margin-top:18px;max-width:35ch}
-.od-public .marci-study .text-link {margin-top:18px}
+.od-public .taskmate-study .text-link {margin-top:18px}
 .od-public .gcs-study {display:grid;grid-template-columns:1fr 2fr;gap:6vw;align-items:center;margin-top:120px}
 .od-public .gcs-study__copy h3 {font-size:var(--lead);max-width:18ch;margin-block:18px 24px}
 .od-public .gcs-study__copy>p:not(.meta,.gcs-study__description) {font-size:var(--lead);line-height:1.4;letter-spacing:-.025em}
@@ -360,8 +362,8 @@
   .od-public .editorial-hero__copy h1 {font-size:6.4vw}
   .od-public .hero-mark {height:340px}
   .od-public .hero-index small {max-width:24ch}
-  .od-public :is(.marci-study,.gcs-study) {gap:4vw}
-  .od-public :is(.marci-study__copy h3,.gcs-study__copy h3) {font-size:var(--lead)}
+  .od-public :is(.taskmate-study,.gcs-study) {gap:4vw}
+  .od-public :is(.taskmate-study__copy h3,.gcs-study__copy h3) {font-size:var(--lead)}
   .od-public .gcs-study__composition {padding:16px;gap:12px}
   .od-public .build-evidence__crop {height:260px}
   .od-public .toolbox__list {column-gap:12px}
@@ -411,11 +413,9 @@
   .od-public .featured-project__footnote {flex-direction:column;gap:10px;margin-top:18px}
   .od-public .selected-work__heading {flex-direction:column;align-items:start;gap:12px;margin-bottom:30px}
   .od-public .selected-work__heading h2 {font-size:24px}
-  .od-public .marci-study {grid-template-columns:1fr;gap:26px}
-  .od-public .marci-study__image img {aspect-ratio:1.25}
-  .od-public .marci-study__copy h3 {font-size:30px;max-width:22ch;margin-block:12px 20px}
-  .od-public .marci-study__description {max-width:39ch;margin-top:16px}
-  .od-public .marci-study .concept-label {max-width:42ch}
+  .od-public .taskmate-study {grid-template-columns:1fr;gap:26px}
+  .od-public .taskmate-study__copy h3 {font-size:30px;max-width:22ch;margin-block:12px 20px}
+  .od-public .taskmate-study__description {max-width:39ch;margin-top:16px}
   .od-public .gcs-study {display:flex;flex-direction:column;gap:28px;margin-top:64px}
   .od-public .gcs-study__copy {width:100%}
   .od-public .gcs-study__copy h3 {font-size:30px;max-width:22ch;margin-block:12px 20px}

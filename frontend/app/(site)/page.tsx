@@ -9,7 +9,7 @@ import { DesignProof } from "@frontend/components/home/design-proof";
 import { Workflow } from "@frontend/components/home/workflow";
 import { SelectedIndex } from "@frontend/components/home/selected-index";
 import { HeroMark } from "@frontend/components/home/hero-mark";
-import marciScreen from "@frontend/public/images/marci/homepage.png";
+import taskMateShowcase from "@frontend/public/images/task-mate/showcase.png";
 import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
 import mobileDashboard from "@frontend/public/images/ground-control-station/mobile-dashboard.png";
 import inquiryWireframe from "@frontend/public/images/off-the-rack/inquiry-wireframe.png";
@@ -18,14 +18,14 @@ import administration from "@frontend/public/images/off-the-rack/admin.jpg";
 
 const selection = [
   { slug: "off-the-rack", number: "01", label: "Storefront, from design to build", target: "work" }, // taste-skill-ignore: requested project index.
-  { slug: "marci-metzger-homes", number: "02", label: "A real estate homepage study", target: "marci" }, // taste-skill-ignore: requested project index.
+  { slug: "task-mate", number: "02", label: "Daily planning, designed for mobile", target: "task-mate" }, // taste-skill-ignore: requested project index.
   { slug: "ground-control-station", number: "03", label: "A system across two screens", target: "ground-control" }, // taste-skill-ignore: requested project index.
 ];
 
 export default async function HomePage() {
   const [settings, projects, capabilities] = await Promise.all([getSiteSettings(), getProjects(), getCapabilities()]);
   const offTheRack = projects.find(project => project.slug === "off-the-rack");
-  const marci = projects.find(project => project.slug === "marci-metzger-homes");
+  const taskMate = projects.find(project => project.slug === "task-mate");
   const groundControl = projects.find(project => project.slug === "ground-control-station");
   const selected = selection.flatMap(item => {
     const project = projects.find(project => project.slug === item.slug);
@@ -54,12 +54,14 @@ export default async function HomePage() {
       <div className="featured-project__footnote"><p className="meta">Design → interface → working product</p><p>Product browsing, custom inquiries, and an admin interface connected to Supabase.</p></div>
     </section>}
 
-    {(marci || groundControl) && <section id="other-work" className="selected-work wrap" aria-labelledby="selected-title">
+    {(taskMate || groundControl) && <section id="other-work" className="selected-work wrap" aria-labelledby="selected-title">
       {/* taste-skill-ignore: real project index labels requested in the brief. */}
-      <div className="selected-work__heading"><h2 id="selected-title">{marci && groundControl ? "Two other ways of thinking." : "Another way of thinking."}</h2><p className="meta">Selected work / {marci && groundControl ? "02—03" : marci ? "02" : "03"}</p></div>{/* taste-skill-ignore: requested index. */}
-      {marci && <article id="marci" className="marci-study" aria-labelledby="marci-title">
-        <Link className="marci-study__image image-link" href="/work/marci-metzger-homes" aria-label="Explore Marci Metzger Homes"><Image src={marciScreen} alt="Marci Metzger Homes redesign with a clear contact action above a large property photograph" sizes="(max-width: 720px) 90vw, 66vw" placeholder="blur" /></Link>
-        <div className="marci-study__copy"><p className="meta">02 / Website redesign</p><h3 id="marci-title">{marci.title}</h3><p>A quieter page.<br />A clearer next step.</p><p className="marci-study__description">A responsive homepage with property imagery up front and contact actions kept close.</p><p className="concept-label">Independent redesign concept. Not an official client engagement.</p><Link className="text-link" href="/work/marci-metzger-homes">View the study<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></div>
+      <div className="selected-work__heading"><h2 id="selected-title">{taskMate && groundControl ? "Two other ways of thinking." : "Another way of thinking."}</h2><p className="meta">Selected work / {taskMate && groundControl ? "02—03" : taskMate ? "02" : "03"}</p></div>{/* taste-skill-ignore: requested index. */}
+      {taskMate && <article id="task-mate" className="taskmate-study" aria-labelledby="taskmate-title">
+        <Link className="taskmate-study__thumbnail image-link" href="/work/task-mate" aria-label="Explore Task Mate mobile UI/UX designs">
+          <Image src={taskMateShowcase} alt="Task Mate productivity app showcase featuring onboarding, login, daily tasks, calendar, statistics, and profile screens" sizes="(max-width: 720px) 90vw, 60vw" placeholder="blur" />
+        </Link>
+        <div className="taskmate-study__copy"><p className="meta">02 / Mobile UI/UX design</p><h3 id="taskmate-title">{taskMate.title}</h3><p>A plan for today.<br />A view of your progress.</p><p className="taskmate-study__description">A mobile task-management interface that brings daily tasks, calendar planning, and progress tracking into one connected experience.</p><Link className="text-link" href="/work/task-mate">Explore the designs<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link></div>
       </article>}
       {groundControl && <article id="ground-control" className="gcs-study" aria-labelledby="gcs-title">
         <div className="gcs-study__copy"><p className="meta">03 / Web + mobile interface</p><h3 id="gcs-title">{groundControl.title}</h3><p>Making a complex system readable.</p><p className="gcs-study__description">System status, flight records, and controls share a desktop view. On mobile, summary cards and a flight list take priority.</p><Link className="text-link" href="/work/ground-control-station">Explore the interface<ArrowUpRightIcon className="ui-icon" aria-hidden="true" focusable="false" /></Link><dl className="gcs-study__notes"><div><dt>Desktop</dt><dd>Overview + connection status</dd></div><div><dt>Mobile</dt><dd>Summary + recent flights</dd></div></dl></div>

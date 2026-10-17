@@ -4,7 +4,6 @@ import type { Project } from "@api/contracts/cms";
 import { WorkflowRoute } from "./workflow-route";
 import inquiryWireframe from "@frontend/public/images/off-the-rack/inquiry-wireframe.png";
 import administration from "@frontend/public/images/off-the-rack/admin.jpg";
-import marciDetail from "@frontend/public/images/marci/homepage-detail.png";
 import dashboard from "@frontend/public/images/ground-control-station/dashboard.png";
 
 const steps = [
@@ -42,7 +41,6 @@ function Connection({ kind }: { kind: "fork" | "foundation" | "interface" | "joi
 export function Workflow({ projects }: { projects: Project[] }) {
   const published = projects.filter(project => project.is_published);
   const offTheRack = published.find(project => project.slug === "off-the-rack");
-  const marci = published.find(project => project.slug === "marci-metzger-homes");
   const groundControl = published.find(project => project.slug === "ground-control-station");
   const artifacts: Partial<Record<(typeof steps)[number]["id"], Artifact>> = {};
 
@@ -61,14 +59,7 @@ export function Workflow({ projects }: { projects: Project[] }) {
     };
   }
 
-  if (marci) {
-    artifacts.interface = {
-      image: marciDetail,
-      alt: "Three real estate services arranged with photography and supporting descriptions",
-      caption: "Marci concept / Interface",
-      project: marci,
-    };
-  } else if (groundControl) {
+  if (groundControl) {
     artifacts.interface = {
       image: dashboard,
       alt: "Ground Control Station interface with flight records and connection controls",
