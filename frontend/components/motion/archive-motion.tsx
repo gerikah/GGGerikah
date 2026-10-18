@@ -17,14 +17,7 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
       });
     }, { threshold: .1 });
     container.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
-    let frame = 0;
-    const graphic = container.querySelector<HTMLElement>(".sketch-hero__graphic");
-    const scroll = () => {
-      if (frame || reduced.matches || !graphic) return;
-      frame = requestAnimationFrame(() => { graphic.style.transform = `translateY(${Math.min(window.scrollY * .09, 60)}px)`; frame = 0; });
-    };
-    window.addEventListener("scroll", scroll, { passive: true });
-    return () => { observer.disconnect(); cancelAnimationFrame(frame); window.removeEventListener("scroll", scroll); };
+    return () => observer.disconnect();
   }, []);
 
   return <div className="od-public" ref={root}>{children}</div>;
