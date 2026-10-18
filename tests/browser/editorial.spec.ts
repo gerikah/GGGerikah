@@ -31,6 +31,7 @@ test("empty public portfolio, responsive layout and protected admin", async ({ p
   await page.goto("/work"); await expect(page.getByText("New work is taking shape.",{exact:false})).toBeVisible();
   await page.goto("/work/off-the-rack"); await expect(page.locator(".case-page")).toHaveCount(0);
   await page.goto("/admin"); await expect(page).toHaveURL(/\/login/);
+  await page.goto("/page-that-does-not-exist"); await expect(page.getByRole("heading", { name: "Not in this archive." })).toBeVisible(); await page.getByRole("link", { name: "Return home" }).click(); await expect(page).toHaveURL("/");
 });
 
 test("real CMS cover, galleries, publishing and homepage lifecycle", async ({ page, browser }) => {
@@ -45,18 +46,26 @@ test("real CMS cover, galleries, publishing and homepage lifecycle", async ({ pa
   const publicContext = await browser.newContext({baseURL:"http://127.0.0.1:3000"}); const publicPage = await publicContext.newPage();
   publicPage.setDefaultTimeout(15000);
   let userId = "", projectId = "";
+  let touchedHomepage = false;
   const uploadedPaths = new Set<string>();
   const { data: originalHomepage } = await service.from("homepage_content").select("*").eq("id",1).single();
+  const canVerifyHomepage = originalHomepage && ![originalHomepage.featured_project_id, originalHomepage.secondary_one_id, originalHomepage.secondary_two_id, originalHomepage.editorial_one_path, originalHomepage.editorial_two_path].some(Boolean);
+  if (!canVerifyHomepage) test.info().annotations.push({ type: "Homepage preserved", description: "Homepage mutations skipped because content is already configured." });
   async function trackFiles() {
     if (projectId) { const {data}=await service.storage.from("portfolio-media").list(projectId); data?.forEach(o=>uploadedPaths.add(`${projectId}/${o.name}`)); }
-    const {data:h}=await service.from("homepage_content").select("editorial_one_path,editorial_two_path").eq("id",1).single();
-    for (const key of ["editorial_one_path","editorial_two_path"] as const) if(h?.[key] && h[key]!==originalHomepage?.[key]) uploadedPaths.add(h[key]);
+    if (touchedHomepage) {
+      const {data:h}=await service.from("homepage_content").select("editorial_one_path,editorial_two_path").eq("id",1).single();
+      for (const key of ["editorial_one_path","editorial_two_path"] as const) if(h?.[key] && h[key]!==originalHomepage?.[key]) uploadedPaths.add(h[key]);
+    }
   }
   try {
     const created=await service.auth.admin.createUser({email,password,email_confirm:true}); if(created.error) throw created.error;
     userId=created.data.user.id;
     const profile=await service.from("profiles").insert({id:userId,role:"admin"}); if(profile.error) throw profile.error;
     await page.goto("/login"); await page.getByLabel("Email").fill(email); await page.getByLabel("Password").fill(password); await page.getByRole("button",{name:"Enter the archive"}).click(); await expect(page).toHaveURL(/\/admin$/);
+    for (const oldPath of ["/admin/projects/2e5a114e-111a-4dac-8950-ff7631bd5b1b?notice=created", "/admin/projects/2e5a114e-111a-4dac-8950-ff7631bd5b1b/preview", "/admin/projects/not-a-valid-id"]) {
+      await page.goto(oldPath); await expect(page).toHaveURL(/\/admin\?notice=project-unavailable$/); await expect(page.getByRole("status")).toContainText("That project is no longer available."); await expect(page.getByRole("heading",{name:"The archive."})).toBeVisible();
+    }
     await page.goto("/admin/projects/new");
     const form=page.locator("form.admin-form");
     await form.locator('[name="title"]').fill("CMS verification"); await expect(form.locator('[name="slug"]')).toHaveValue("cms-verification");
@@ -82,10 +91,13 @@ test("real CMS cover, galleries, publishing and homepage lifecycle", async ({ pa
     await publicPage.goto(`/work/${slug}`); await expect(publicPage.locator(".visual-board figure")).toHaveCount(6); await expect(publicPage.getByRole("heading",{name:"VISUAL BOARD"})).toBeVisible();
     await publicPage.locator(".visual-image").first().click(); await expect(publicPage.getByRole("dialog")).toBeVisible(); await publicPage.keyboard.press("ArrowRight"); await expect(publicPage.locator(".image-dialog-toolbar span")).toHaveText("2 / 6"); await publicPage.keyboard.press("Escape"); await expect(publicPage.getByRole("dialog")).not.toBeVisible(); await expect(publicPage.locator(".visual-image").first()).toBeFocused();
     await captureLoadedPage(publicPage,".local/screenshots/project-landscape.png");
+    if (canVerifyHomepage) {
+    touchedHomepage = true;
     await page.goto("/admin/homepage"); await page.locator('[name="featured_project_id"]').selectOption(projectId); await page.locator('[name="secondary_one_id"]').selectOption(projectId); await page.getByRole("button",{name:"Save homepage projects"}).click(); await expect(page.getByText("Choose a different project",{exact:false})).toBeVisible(); await page.locator('[name="secondary_one_id"]').selectOption(""); await page.getByRole("button",{name:"Save homepage projects"}).click(); await expect(page.getByText("Homepage projects saved.")).toBeVisible();
     const editorialForms=page.locator("form").filter({has:page.locator('input[type="file"]')});
     for(let i=0;i<2;i++) { const ef=editorialForms.nth(i); await ef.locator('[name="file"]').setInputFiles(image); await ef.locator('[name="alt_text"]').fill(`Editorial verification ${i+1}`); await ef.getByRole("button",{name:"Upload editorial image"}).click(); await expect(ef.getByText("Editorial image saved.")).toBeVisible(); }
     await trackFiles(); await publicPage.goto("/"); await expect(publicPage.locator(".selected-project")).toHaveCount(1); await expect(publicPage.locator(".editorial-portrait img")).toHaveCount(2); await publicPage.locator(".selected-project").click(); await expect(publicPage).toHaveURL(new RegExp(slug));
+    }
     await page.goto(`/admin/projects/${projectId}`); const unpublish=page.locator("#publish form"); await unpublish.getByRole("checkbox").check(); await unpublish.getByRole("button",{name:"Unpublish",exact:true}).click(); await expect(page.getByRole("button",{name:"Publish project",exact:true})).toBeVisible();
     const {data:clearedHomepage}=await service.from("homepage_content").select("featured_project_id").eq("id",1).single(); expect(clearedHomepage?.featured_project_id).toBeNull();
     const removeCover=page.locator("#cover form").filter({has:page.getByRole("button",{name:"Remove cover",exact:true})}); await removeCover.getByRole("checkbox").check(); await removeCover.getByRole("button",{name:"Remove cover",exact:true}).click(); await expect(page.locator(".admin-cover-preview")).toHaveCount(0);
@@ -108,7 +120,7 @@ test("real CMS cover, galleries, publishing and homepage lifecycle", async ({ pa
     await trackFiles();
     if(projectId) await service.from("projects").delete().eq("id",projectId);
     else await service.from("projects").delete().eq("slug",slug);
-    if(originalHomepage) await service.from("homepage_content").update(originalHomepage).eq("id",1);
+    if(touchedHomepage && originalHomepage) await service.from("homepage_content").update(originalHomepage).eq("id",1);
     if(uploadedPaths.size) await service.storage.from("portfolio-media").remove([...uploadedPaths]);
     if(userId) await service.auth.admin.deleteUser(userId);
     await publicContext.close();

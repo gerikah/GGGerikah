@@ -1,7 +1,5 @@
 ﻿"use client";
 
-
-
 import { useEffect, useRef, type ReactNode } from "react";
 
 export function ArchiveMotion({ children }: { children: ReactNode }) {

@@ -61,7 +61,7 @@ npm run start
 npx playwright test tests/browser/editorial.spec.ts
 ```
 
-The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, and removes those records afterward. Run it against an empty verification portfolio; it temporarily updates homepage assignments and restores them. Do not run it concurrently with real CMS editing.
+The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, and removes those records afterward. Run it against an empty verification portfolio. Homepage mutations run only when all homepage slots and editorial images are empty; configured homepage content is preserved and that portion of the test is annotated as skipped. Do not run it concurrently with real CMS editing.
 
 ## Deployment
 

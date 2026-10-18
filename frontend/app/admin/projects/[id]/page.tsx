@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@backend/supabase/auth";
 import { resolveMediaUrl, resolveProjectMedia } from "@backend/cms/media";
@@ -14,10 +14,10 @@ import { saveEditorialProject, uploadCover } from "@api/actions/editorial";
 export default async function ProjectEditor({ params }: { params: Promise<{ id: string }> }) {
   const { supabase } = await requireAdmin();
   const { id } = await params;
-  if (!z.uuid().safeParse(id).success) notFound();
+  if (!z.uuid().safeParse(id).success) redirect("/admin?notice=project-unavailable");
   const [projectResult, mediaResult] = await Promise.all([supabase.from("projects").select("*").eq("id", id).maybeSingle(), supabase.from("project_media").select("*").eq("project_id", id).order("created_at")]);
   if (projectResult.error || mediaResult.error) throw new Error("Unable to load project editor.");
-  if (!projectResult.data) notFound();
+  if (!projectResult.data) redirect("/admin?notice=project-unavailable");
   const project = projectResult.data as Project;
   const media = await resolveProjectMedia(mediaResult.data as ProjectMedia[], supabase);
   let cover = "";
