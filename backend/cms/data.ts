@@ -4,9 +4,9 @@ import { createClient } from "@backend/supabase/server";
 import { isSupabaseConfigured } from "@backend/supabase/config";
 import seedJson from "@database/seed-data.json";
 import { resolveMediaUrl, resolveProjectMedia } from "./media";
-import type { Capability, CaseStudy, Project, ProjectSection, SeedData, SiteSettings } from "@api/contracts/cms";
+import type { Capability, CaseStudy, HomepageContent, Project, SeedData, SiteSettings } from "@api/contracts/cms";
 
-const seed = seedJson as SeedData;
+const seed = seedJson as unknown as SeedData;
 
 function dataError(resource: string, message: string): never {
   throw new Error(`Unable to load ${resource} from Supabase. Check the migrations, seed, and RLS policies. ${message}`);
@@ -22,7 +22,7 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
 
 export const getProjects = cache(async (): Promise<Project[]> => {
   if (!isSupabaseConfigured()) {
-    return seed.projects.filter((project) => project.is_published).sort((a, b) => a.sort_order - b.sort_order);
+    return [];
   }
   const supabase = await createClient();
   const { data, error } = await supabase.from("projects").select("*")
@@ -36,14 +36,7 @@ export const getProjects = cache(async (): Promise<Project[]> => {
 
 export const getProject = cache(async (slug: string): Promise<CaseStudy | null> => {
   if (!isSupabaseConfigured()) {
-    const project = seed.projects.find((item) => item.slug === slug && item.is_published);
-    if (!project) return null;
-    return {
-      project,
-      sections: seed.project_sections.filter((item) => item.project_id === project.id).sort((a, b) => a.sort_order - b.sort_order),
-      media: seed.project_media.filter((item) => item.project_id === project.id).sort((a, b) => a.sort_order - b.sort_order)
-        .map((item) => ({ ...item, url: item.storage_path })),
-    };
+    return null;
   }
   const supabase = await createClient();
   const { data, error } = await supabase.from("projects").select("*")
@@ -51,18 +44,24 @@ export const getProject = cache(async (slug: string): Promise<CaseStudy | null> 
   if (error) dataError("the case study", error.message);
   if (!data) return null;
   const project = data as Project;
-  const [sectionsResult, mediaResult, cover] = await Promise.all([
-    supabase.from("project_sections").select("*").eq("project_id", project.id).order("sort_order"),
-    supabase.from("project_media").select("*").eq("project_id", project.id).order("sort_order"),
+  const [mediaResult, cover] = await Promise.all([
+    supabase.from("project_media").select("*").eq("project_id", project.id).not("slot", "is", null).order("slot"),
     resolveMediaUrl(project.cover_image_url, supabase),
   ]);
-  if (sectionsResult.error) dataError("case-study sections", sectionsResult.error.message);
   if (mediaResult.error) dataError("case-study images", mediaResult.error.message);
   return {
     project: { ...project, cover_image_url: cover },
-    sections: (sectionsResult.data ?? []) as ProjectSection[],
     media: await resolveProjectMedia(mediaResult.data ?? [], supabase),
   };
+});
+
+export const getHomepage = cache(async (): Promise<HomepageContent> => {
+  const empty: HomepageContent = { id: 1, featured_project_id: null, secondary_one_id: null, secondary_two_id: null, editorial_one_path: "", editorial_one_alt: "", editorial_two_path: "", editorial_two_alt: "" };
+  if (!isSupabaseConfigured()) return empty;
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("homepage_content").select("*").eq("id", 1).single();
+  if (error) dataError("homepage content", error.message);
+  return { ...data, editorial_one_url: await resolveMediaUrl(data.editorial_one_path, supabase), editorial_two_url: await resolveMediaUrl(data.editorial_two_path, supabase) };
 });
 
 export const getCapabilities = cache(async (): Promise<Capability[]> => {

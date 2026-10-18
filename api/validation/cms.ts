@@ -22,27 +22,21 @@ export const settingsSchema = z.object({
 });
 
 export const projectSchema = z.object({
-  title: required("Project title", 200),
-  slug: required("Slug", 160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and single hyphens for the slug."),
-  project_number: z.coerce.number().int().min(1).max(9999), category: required("Category", 250),
-  short_description: required("Short description", 600), overview: text(8000), role: text(600),
-  tools: text(1000).transform((value) => value.split(/[\n,]/).map((tool) => tool.trim()).filter(Boolean)).refine((items) => items.length <= 30 && items.every((item) => item.length <= 100), "Use up to 30 tools, each under 100 characters."),
-  year: z.string().trim().transform((value) => value ? Number(value) : null).refine((value) => value === null || (Number.isInteger(value) && value >= 1900 && value <= 2100), "Use a year between 1900 and 2100, or leave it blank."),
-  project_type: required("Project type", 200), status: text(200),
-  live_url: externalUrl, repository_url: externalUrl, sort_order: integer,
-});
-
-export const sectionSchema = z.object({
-  section_type: z.enum(["text", "image", "image_pair", "gallery", "quote", "split", "tools", "full_width", "reflection", "external_link"]),
-  heading: text(300).transform((value) => value || null), body: text(12000), sort_order: integer,
-}).superRefine((value, context) => {
-  if (value.section_type === "external_link" && (!value.body || !externalUrl.safeParse(value.body).success)) {
-    context.addIssue({code: "custom", path: ["body"], message: "External link content must be a complete http:// or https:// URL."});
-  }
+  title: required("Project title", 45),
+  slug: required("Slug", 60).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and single hyphens for the slug."),
+  short_description: required("Subtitle", 100), role: required("Role", 70),
+  tools: text(214).transform((value) => value.split(/[\n,]/).map((tool) => tool.trim()).filter(Boolean)).refine((items) => items.length <= 8 && items.every((item) => item.length <= 25), "Use up to 8 stack entries, each at most 25 characters."),
+  year: z.string().regex(/^\d{4}$/, "Enter a four-digit year.").transform(Number).refine(value => value >= 1900 && value <= 2200, "Use a year between 1900 and 2200."),
+  project_type: z.enum(["Personal Project", "Independent Concept", "Academic Project", "Client Work"]),
+  status: z.enum(["Concept", "In Progress", "Completed"]),
+  section_one_heading: required("First heading", 40), section_one_body: required("First description", 400),
+  section_two_heading: required("Second heading", 40), section_two_body: required("Second description", 400),
+  gallery_layout: z.enum(["landscape", "mixed"]),
+  live_url: externalUrl, repository_url: externalUrl, figma_url: externalUrl, sort_order: integer,
 });
 
 export const mediaSchema = z.object({
-  alt_text: required("Image description (alt text)", 500), caption: text(1000),
+  alt_text: required("Image description (alt text)", 160), caption: text(90),
   layout: z.enum(["full", "half", "portrait"]), sort_order: integer,
 });
 
@@ -56,4 +50,4 @@ export function formValues(form: FormData, keys: readonly string[]) {
 }
 
 export const settingsFields = ["name", "role", "tagline", "hero_supporting_copy", "bio", "availability_text", "email", "linkedin_url", "github_url", "resume_url", "footer_copy"] as const;
-export const projectFields = ["title", "slug", "project_number", "category", "short_description", "overview", "role", "tools", "year", "project_type", "status", "live_url", "repository_url", "sort_order"] as const;
+export const projectFields = ["title", "slug", "short_description", "role", "tools", "year", "project_type", "status", "live_url", "repository_url", "figma_url", "sort_order", "section_one_heading", "section_one_body", "section_two_heading", "section_two_body", "gallery_layout"] as const;

@@ -17,22 +17,30 @@ const validationModule = new Module(validationPath);
 validationModule.filename = validationPath;
 validationModule.paths = Module._nodeModulePaths(dirname(validationPath));
 validationModule._compile(compiled, validationPath);
-const { externalUrl, projectSchema, settingsSchema, sectionSchema, mediaSchema } = validationModule.exports;
+const { externalUrl, projectSchema, settingsSchema, mediaSchema } = validationModule.exports;
 const seed = JSON.parse(readFileSync(new URL("../database/seed-data.json", import.meta.url), "utf8"));
+const validProject = { title: "Validation fixture", slug: "validation-fixture", short_description: "A test-only input.", role: "Designer", tools: "Next.js, Figma", year: "2026", project_type: "Personal Project", status: "Concept", section_one_heading: "The Idea", section_one_body: "A concise idea.", section_two_heading: "The Build", section_two_body: "A concise build.", gallery_layout: "landscape", live_url: "", repository_url: "", figma_url: "", sort_order: 0 };
 
 test("initial public copy survives UTF-8 ingestion without broken punctuation", () => {
   const content = JSON.stringify(seed);
   assert.doesNotMatch(content, /\uFFFD|â€|[ÃÂ][\u0080-\u00BF]/);
 });
 
-test("verified initial projects can be saved without inventing year or status", () => {
-  for (const project of seed.projects) {
-    const input = { ...project, tools: project.tools.join(", "), year: project.year?.toString() ?? "" };
-    const parsed = projectSchema.safeParse(input);
-    assert.ok(parsed.success, `${project.title}: ${parsed.error?.message}`);
-    assert.equal(parsed.data.year, null);
-    assert.equal(parsed.data.status, "");
+test("the public seed cannot recreate old portfolio projects", () => {
+  assert.deepEqual(seed.projects, []);
+  assert.deepEqual(seed.project_sections, []);
+  assert.deepEqual(seed.project_media, []);
+});
+test("editorial fields enforce limits and required metadata without truncation", () => {
+  assert.equal(projectSchema.safeParse(validProject).success, true);
+  for (const [field, max] of Object.entries({ title:45, slug:60, short_description:100, role:70, section_one_heading:40, section_two_heading:40, section_one_body:400, section_two_body:400 })) {
+    assert.equal(projectSchema.safeParse({...validProject,[field]:"a".repeat(max)}).success,true,field);
+    assert.equal(projectSchema.safeParse({...validProject,[field]:"a".repeat(max+1)}).success,false,field);
+    assert.equal(projectSchema.safeParse({...validProject,[field]:""}).success,false,field);
   }
+  for (const patch of [{year:""},{year:"26"},{status:"Live"},{project_type:"Other"},{gallery_layout:"freeform"},{tools:"a".repeat(26)},{tools:Array(9).fill("React").join(",")}]) assert.equal(projectSchema.safeParse({...validProject,...patch}).success,false);
+  assert.equal(mediaSchema.safeParse({alt_text:"a".repeat(161),caption:"",layout:"half",sort_order:0}).success,false);
+  assert.equal(mediaSchema.safeParse({alt_text:"Image",caption:"a".repeat(91),layout:"half",sort_order:0}).success,false);
 });
 
 test("external links reject script schemes, embedded credentials, and relative addresses", () => {
@@ -61,11 +69,13 @@ test("every public contact URL uses the same scheme and credential validation", 
   assert.equal(settingsSchema.safeParse(seed.site_settings).success, true);
 });
 
-test("external-link story blocks require an actual safe URL", () => {
-  for (const body of ["", "javascript:alert(1)", "https://user:password@example.com"]) {
-    assert.equal(sectionSchema.safeParse({ section_type: "external_link", heading: "", body, sort_order: "0" }).success, false);
+test("all project link fields require safe URLs when provided", () => {
+  for (const field of ["live_url", "repository_url", "figma_url"]) {
+    for (const url of ["javascript:alert(1)", "https://user:password@example.com"]) {
+      assert.equal(projectSchema.safeParse({ ...validProject, [field]: url }).success, false, field);
+    }
+    assert.equal(projectSchema.safeParse({ ...validProject, [field]: "https://example.com" }).success, true, field);
   }
-  assert.equal(sectionSchema.safeParse({ section_type: "external_link", heading: "More", body: "https://example.com", sort_order: "0" }).success, true);
 });
 
 test("meaningful uploaded images cannot be saved with empty alt text", () => {
@@ -78,8 +88,7 @@ test("meaningful uploaded images cannot be saved with empty alt text", () => {
 });
 
 test("project slugs cannot address another route or carry encoded path traversal", () => {
-  const project = seed.projects[0];
-  const input = { ...project, tools: project.tools.join(", "), year: "" };
+  const input = validProject;
   for (const slug of ["../admin", "project/../../login", "%2e%2e", "foo?draft=true", "two--hyphens"]) {
     assert.equal(projectSchema.safeParse({ ...input, slug }).success, false, slug);
   }

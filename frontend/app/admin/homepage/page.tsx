@@ -1,0 +1,13 @@
+import Image from "next/image";
+import { requireAdmin } from "@backend/supabase/auth";
+import { getHomepage } from "@backend/cms/data";
+import { ActionForm, Field } from "@frontend/components/admin/action-form";
+import { ImageInput } from "@frontend/components/admin/image-input";
+import { saveHomepage, saveEditorialImage } from "@api/actions/editorial";
+export default async function HomepageEditor() {
+  const { supabase } = await requireAdmin();
+  const [homepage, result] = await Promise.all([getHomepage(), supabase.from("projects").select("id,title").eq("is_published", true).order("title")]);
+  if (result.error) throw new Error("Unable to load published projects.");
+  const slots = [{ field: "featured_project_id", title: "Slot 1 — Large featured project", id: homepage.featured_project_id }, { field: "secondary_one_id", title: "Slot 2 — Secondary project", id: homepage.secondary_one_id }, { field: "secondary_two_id", title: "Slot 3 — Secondary project", id: homepage.secondary_two_id }];
+  return <><div className="admin-page-heading"><h1>Homepage</h1></div><section className="admin-panel"><h2>Homepage Projects</h2><p>Choose published projects. Empty slots keep their original gray placeholders. Each project can occupy one slot.</p><ActionForm action={saveHomepage} submitLabel="Save homepage projects">{slots.map(slot => <label className="admin-field" key={slot.field}><span>{slot.title}</span><select name={slot.field} defaultValue={result.data.some(p => p.id === slot.id) ? slot.id! : ""}><option value="">Empty placeholder</option>{result.data.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>)}</ActionForm></section><section className="admin-panel"><h2>Homepage Content</h2><p>The two editorial portraits are independent of your project selections.</p><div className="admin-grid">{(["one", "two"] as const).map((position,i) => { const url = homepage[`editorial_${position}_url`]; const alt = homepage[`editorial_${position}_alt`]; return <section key={position}><h3>Editorial image {i + 1}</h3>{url && <Image src={url} alt={alt} width={400} height={600} style={{ objectFit: "contain" }} unoptimized />}<ActionForm action={saveEditorialImage.bind(null, position)} submitLabel={url ? "Replace editorial image" : "Upload editorial image"}><ImageInput required /><Field name="alt_text" label="Image alt text" value={alt} limit={160} required /></ActionForm>{url && <ActionForm action={saveEditorialImage.bind(null, position)} submitLabel="Remove editorial image" confirmLabel="Restore the placeholder. Keep the stored file." danger><input type="hidden" name="remove" value="yes" /></ActionForm>}</section>; })}</div></section></>;
+}

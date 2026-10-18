@@ -12,15 +12,18 @@ insert into public.profiles (id, role) values
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0001', 'admin'),
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0002', 'viewer');
 insert into public.site_settings(id, name) values (1, 'RLS fixture') on conflict (id) do nothing;
-insert into public.projects (id, title, slug, project_number, cover_image_url, cover_alt, is_published) values
-  ('dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'Published fixture', 'rls-published-fixture', 98, 'rls-test/public-cover.webp', 'Published cover', true),
-  ('dddddddd-dddd-4ddd-8ddd-dddddddd0102', 'Draft fixture', 'rls-draft-fixture', 99, 'rls-test/draft-cover.webp', 'Draft cover', false);
+insert into public.projects (id, title, slug, project_number, cover_image_url, cover_alt, short_description, role, year, status, project_type, section_one_heading, section_one_body, section_two_heading, section_two_body) values
+  ('dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'Published fixture', 'rls-published-fixture', 98, 'rls-test/public-cover.webp', 'Published cover', 'Test subtitle', 'Designer', 2026, 'Completed', 'Personal Project', 'Idea', 'Test idea', 'Build', 'Test build'),
+  ('dddddddd-dddd-4ddd-8ddd-dddddddd0102', 'Draft fixture', 'rls-draft-fixture', 99, 'rls-test/draft-cover.webp', 'Draft cover', 'Test subtitle', 'Designer', 2026, 'Concept', 'Personal Project', 'Idea', 'Test idea', 'Build', 'Test build');
 insert into public.project_sections (id, project_id, body) values
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0201', 'dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'Published section'),
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0202', 'dddddddd-dddd-4ddd-8ddd-dddddddd0102', 'Draft section');
-insert into public.project_media (id, project_id, storage_path, alt_text) values
-  ('dddddddd-dddd-4ddd-8ddd-dddddddd0301', 'dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'rls-test/public-gallery.webp', 'Published image'),
-  ('dddddddd-dddd-4ddd-8ddd-dddddddd0302', 'dddddddd-dddd-4ddd-8ddd-dddddddd0102', 'rls-test/draft-gallery.webp', 'Draft image');
+insert into public.project_media (id, project_id, storage_path, alt_text, layout, slot) values
+  ('dddddddd-dddd-4ddd-8ddd-dddddddd0301', 'dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'rls-test/public-gallery.webp', 'Published image', 'half', 0),
+  ('dddddddd-dddd-4ddd-8ddd-dddddddd0302', 'dddddddd-dddd-4ddd-8ddd-dddddddd0102', 'rls-test/draft-gallery.webp', 'Draft image', 'half', 0);
+insert into public.project_media(project_id,storage_path,alt_text,layout,slot)
+select 'dddddddd-dddd-4ddd-8ddd-dddddddd0101', 'rls-extra/gallery-' || slot || '.webp', 'Gallery image', 'half', slot from generate_series(1,5) slot;
+update public.projects set is_published=true where id='dddddddd-dddd-4ddd-8ddd-dddddddd0101';
 insert into public.capabilities (id, title, is_published) values
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0401', 'Published fixture', true),
   ('dddddddd-dddd-4ddd-8ddd-dddddddd0402', 'Draft fixture', false);
@@ -33,7 +36,7 @@ insert into storage.objects(bucket_id, name) values
 
 select ok((select bool_and(relrowsecurity) from pg_class where oid in (
   'public.profiles'::regclass, 'public.site_settings'::regclass, 'public.projects'::regclass,
-  'public.project_sections'::regclass, 'public.project_media'::regclass, 'public.capabilities'::regclass
+  'public.project_sections'::regclass, 'public.project_media'::regclass, 'public.capabilities'::regclass, 'public.homepage_content'::regclass
 )), 'Every CMS table enables RLS');
 select ok((select not public from storage.buckets where id = 'portfolio-media'), 'Portfolio bucket is private');
 select ok((select bool_and(not has_table_privilege('anon', table_name, 'insert,update,delete')) from (values
@@ -91,7 +94,7 @@ with changed as (update public.projects set title = 'Admin edit' where slug = 'r
 with changed as (update public.project_sections set body = 'Admin edit' where id = 'dddddddd-dddd-4ddd-8ddd-dddddddd0202' returning id) select is((select count(*) from changed), 1::bigint, 'Admin can update draft sections');
 with changed as (update public.project_media set caption = 'Admin edit' where id = 'dddddddd-dddd-4ddd-8ddd-dddddddd0302' returning id) select is((select count(*) from changed), 1::bigint, 'Admin can update draft gallery records');
 with changed as (update public.capabilities set description = 'Admin edit' where id = 'dddddddd-dddd-4ddd-8ddd-dddddddd0402' returning id) select is((select count(*) from changed), 1::bigint, 'Admin can update draft capabilities');
-select lives_ok($$insert into public.projects(id, title, slug, project_number) values ('dddddddd-dddd-4ddd-8ddd-dddddddd0103', 'Admin insert', 'rls-admin-insert', 97)$$, 'Admin can create draft projects');
+select lives_ok($$insert into public.projects(id, title, slug, project_number,short_description,role,year,status,project_type,section_one_heading,section_one_body,section_two_heading,section_two_body) values ('dddddddd-dddd-4ddd-8ddd-dddddddd0103', 'Admin insert', 'rls-admin-insert', 97,'Test subtitle','Designer',2026,'Concept','Personal Project','Idea','Test idea','Build','Test build')$$, 'Admin can create draft projects');
 select lives_ok($$insert into public.project_sections(project_id) values ('dddddddd-dddd-4ddd-8ddd-dddddddd0103')$$, 'Admin can create sections');
 select lives_ok($$insert into public.project_media(project_id, storage_path, alt_text) values ('dddddddd-dddd-4ddd-8ddd-dddddddd0103', 'rls-test/admin.webp', 'Admin image')$$, 'Admin can create gallery records');
 select lives_ok($$insert into public.capabilities(id, title) values ('dddddddd-dddd-4ddd-8ddd-dddddddd0403', 'Admin insert')$$, 'Admin can create capabilities');

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Shared foundation. Public art direction and CMS forms have separate styles. */
-:root {--black:#080808;--charcoal:#171717;--gray:#b7b7b2;--paper:#efefed;--line:#30302e;--font-sans:"Space Grotesk",Arial,sans-serif;--font-mono:"IBM Plex Mono",monospace;--gutter:clamp(18px,2.2vw,32px)}
+:root {--black:#101010;--charcoal:#171717;--gray:#aaa69f;--paper:#d8d3c8;--line:#56544f;--font-sans:"Poppins",Arial,sans-serif;--font-mono:"Space Mono",monospace;--gutter:clamp(22px,8.6vw,150px)}
 @theme inline {--color-background:var(--black);--color-foreground:var(--paper);--font-sans:var(--font-sans);--font-mono:var(--font-mono)}
 * {box-sizing:border-box}
 html {scroll-behavior:smooth;scroll-padding-top:24px}

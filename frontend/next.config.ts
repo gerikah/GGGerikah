@@ -16,7 +16,7 @@ const config: NextConfig = {
     // Signed storage URLs are permission checked by Supabase and expire.
     minimumCacheTTL: 60,
   },
-  experimental: { serverActions: { bodySizeLimit: "12mb" } },
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
 };
 
 export default config;

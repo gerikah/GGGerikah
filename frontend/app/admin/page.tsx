@@ -9,7 +9,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
   const { notice } = await searchParams;
   const published = projects?.filter((project) => project.is_published).length ?? 0;
   return <><div className="admin-page-heading"><div><p className="admin-eyebrow">YOUR WORK / EDITION CONTROL</p><h1>The archive.</h1><p className="admin-muted">{projects?.length ?? 0} projects · {published} published · {(projects?.length ?? 0) - published} drafts</p></div><Link href="/admin/projects/new" className="admin-button">+ New project</Link></div>
-    {notice === "deleted" && <p className="admin-message is-success" role="status">Project and its uploaded images deleted.</p>}
+    {notice === "deleted" && <p className="admin-message is-success" role="status">Project records deleted. Stored files were retained.</p>}
     {notice === "deleted-storage-warning" && <p className="admin-message is-error" role="status">Project deleted. Some storage files could not be removed; check the project folder in Supabase Storage.</p>}
     {error ? <div className="admin-panel"><h2>Content could not be loaded.</h2><p>Check your Supabase connection and confirm the migration has been applied, then refresh this page.</p></div>
       : !projects?.length ? <div className="admin-panel admin-empty"><span>NO. 00</span><h2>Your next story starts here.</h2><p>Create a draft, add real project details and visuals, then publish when it is ready.</p><Link href="/admin/projects/new" className="admin-button">Create your first draft</Link></div>

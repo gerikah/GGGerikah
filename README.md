@@ -1,175 +1,80 @@
-# Gerikah — Design Archive
+# Gerikah — Design & Development
 
-A charcoal portfolio for **Gerikah**, UI/UX Designer and Frontend Developer. The published seed contains eight projects identified from the supplied screenshots, wireframes, and diagrams. Marci Metzger Homes remains explicitly an **independent redesign concept**. Source images and the supplied portrait are preserved in `frontend/design/assets/` and copied into `frontend/public/images/` for the portfolio.
+A black-and-cream editorial portfolio based on the three screenshots in `frontend/design/assets/NEW ASSETS/`, with Space Mono headings and Poppins body text. Projects are created and published through the existing authenticated Supabase CMS. The archive starts empty; homepage placeholders remain until configured.
 
-The public interface is a dark editorial archive with locally hosted Manrope and IBM Plex Mono. A project-neutral hero introduces Gerikah through the personal mark, with restrained pointer movement on its visual layers. The selected-work index reveals real colour previews on hover or keyboard focus, then leads into Off The Rack's wireframe/interface toggle. Marci Metzger Homes and Ground Control Station keep distinct compositions. Original-colour inquiry and admin screens provide design-to-build evidence, followed by one connected eight-stage process map with parallel build branches and a tactile SVG technology toolbox. Desktop project covers reveal colour and lift slightly on hover/focus; touch devices show colour immediately. The remaining work is collected in a compact `/work` index. Sticky white-logo navigation stays visible without loading overlays. See the [interaction and workflow revision](docs/interaction-workflow-v3.md), [focused v2 report](docs/focused-v2.md), and [original redesign report](docs/taste-redesign.md). The original OpenDesign export and artwork remain archived.
-
-## Published project inventory
-
-| Project | Case-study slug | Evidence in the supplied assets |
-| --- | --- | --- |
-| Off The Rack | `off-the-rack` | Storefront, product, administration, and wireframe screenshots; user-confirmed project details. |
-| Marci Metzger Homes | `marci-metzger-homes` | Independent homepage redesign screenshots; user-confirmed project details. |
-| Ground Control Station | `ground-control-station` | LIPAD GCS desktop/mobile dashboards, analytics, drone-stream screens, and related GCS diagrams. |
-| Riftbound | `riftbound` | Presentation labeled Game UI Design, with home, heroes, equipment, and battle screens. |
-| Task Mate | `task-mate` | Named, annotated mobile task-management wireframe map. |
-| Study Buddies | `study-buddies` | Named account, matching, chat, and navigation flowchart. |
-| DropSafe | `dropsafe` | Named locker-system diagram for delivery, retrieval, and the resident dashboard. |
-| E-Registered Messaging System | `e-registered-messaging-system` | Titled use-case diagram and related numbered sender, message, campaign, and account flows. |
-
-The Flows & Wireframes presentation combines several of these works; it is not counted as an additional project. The numbered messaging diagrams belong to one documented system, and the GCS diagrams belong to Ground Control Station. Each case study uses a selection of real source visuals rather than publishing every image. Task Mate, Study Buddies, and DropSafe each have one standalone source sheet, used for both their cover and gallery. Their descriptions identify wireframes or flow documentation and do not claim a shipped application, client engagement, or measured outcome.
-
-This repository is a separate replacement project. Develop and deploy it as a new project while the existing portfolio stays live. No production domain or existing deployment needs to change to preview this version.
-
-## Stack and routes
-
-- Next.js 16 App Router, React, strict TypeScript, Tailwind CSS, and Framer Motion.
-- Supabase Auth, Postgres with Row-Level Security, and a private Storage bucket.
-- `/`: project-neutral introduction, below-fold project index, featured Off The Rack comparison, two selected studies, actual design/build evidence, connected workflow, short about note, project-linked SVG toolbox, contact, and complete archive link.
-- `/work`: compact index of all published projects with direct case-study links.
-- `/work/[slug]`: reusable case study assembled from CMS sections and media.
-- `/login`: email/password sign-in; there is no public sign-up page.
-- `/admin`: authenticated administration, restricted to profiles with `role = 'admin'`.
+See the [redesign and verification report](docs/editorial-redesign.md) for implementation details, backup locations, upload investigation and the first-project walkthrough. The [project structure](docs/project-structure.md) describes the current files and cleanup.
 
 ## Local development
-
-Use Node.js 20.9 or later and npm. Next.js 16 runs ESLint separately from the production build, so run both commands when validating changes. See the [official Next.js installation instructions](https://nextjs.org/docs/app/getting-started/installation).
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Without Supabase environment values, the public portfolio renders the checked-in seed content, and the CMS explains that a connection is required. This makes it possible to review the design before creating the database. Once Supabase is configured, published database content becomes the source for public pages.
+Open `http://localhost:3000`. On Windows PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`. Without Supabase configuration, the site shows global seed settings and empty project positions; no projects are seeded or recreated.
 
-On Windows PowerShell, if script execution policy blocks `npm.ps1`, run the same commands with `npm.cmd` (for example, `npm.cmd run dev`); changing the system execution policy is unnecessary.
-
-Copy `frontend/.env.example` to `frontend/.env.local`, then fill in the values from the new Supabase project's API settings:
+Copy `frontend/.env.example` to `frontend/.env.local` and configure:
 
 ```dotenv
 SUPABASE_URL=
 SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Only the URL and publishable key are required. The template also has optional private SECRET_KEY and JWKS_URL entries; neither is used by the CMS's RLS-protected clients. These variables are read on the server, without NEXT_PUBLIC prefixes. The publishable key is intended for client use; permissions are enforced by the authenticated session and RLS. Do not add a service-role or secret key to a `NEXT_PUBLIC_` variable. `frontend/.env.local` is ignored by Git. Restart the development server after changing environment values.
+Normal CMS operations use the authenticated session and RLS. Optional `SUPABASE_SECRET_KEY` is only needed for local backup/integration verification, not production CMS writes. Never expose it through a `NEXT_PUBLIC_` variable. Environment files and backups are ignored by Git.
 
-The verification commands are:
+## Database setup
+
+For a new database, apply files in `database/supabase/migrations/` in filename order, then `database/supabase/seed.sql`. For an existing database, apply only unapplied migrations. **The editorial migration intentionally backs up and resets the old project collection. Do not rerun it on a new active collection.** It leaves storage objects, users, global settings and capabilities intact.
+
+The seed now contains only global settings and capabilities. `npm run seed:generate` regenerates SQL; `node scripts/seed.mjs --check` verifies it.
+
+Core tables are `projects`, `project_media`, `homepage_content`, `site_settings`, `capabilities` and protected administrator `profiles`. The old `project_sections` table remains for compatibility; new projects use two bounded story fields directly on `projects`. The private `portfolio-media` bucket accepts PNG/JPG/WebP up to 3 MB.
+
+Provision an administrator in Supabase Auth, then assign that user's real UUID:
+
+```sql
+insert into public.profiles (id, role)
+values ('YOUR_AUTH_USER_UUID', 'admin')
+on conflict (id) do update set role = excluded.role;
+```
+
+Sign in at `/login`. There is no public sign-up page. See [CMS setup](docs/cms-setup.md).
+
+## Editing
+
+1. **Projects → New project**: enter the short metadata and two story sections, select a gallery layout, upload a cover with alt text, and save a draft.
+2. Fill the six landscape slots, or three portrait and two landscape slots. The cover is separate. Use the saved-page preview, then publish.
+3. **Homepage**: assign published projects to the large feature and two secondary positions; upload the independent editorial portraits.
+4. Unpublish before changing layouts or removing required visuals. Replacements and layout changes retain displaced files in Unassigned media. Deleting a project removes its records while retaining stored files.
+
+Only published projects appear at `/work` and `/work/[slug]`. Private previews under `/admin/projects/[id]/preview` require administrator authentication. Public media URLs are permission-checked and expire after five minutes; already downloaded or cached images cannot be revoked by unpublishing.
+
+## Verification
 
 ```sh
 npm run lint
 npm run typecheck
 npm test
 npm run privacy:check
-npm run test:e2e
 npm run build
 npm run start
+npx playwright test tests/browser/editorial.spec.ts
 ```
 
-`npm run start` serves the completed production build. The test command checks canonical content and validation boundaries; a live Supabase project is still needed to exercise real login, database permissions, and uploads. With a running local Supabase instance, apply/reset the local database and run `supabase --workdir database test db` for the pgTAP access regression suite in `database/supabase/tests/portfolio_rls.test.sql`. That suite exercises anonymous, viewer, and admin permissions, draft storage references, and unpublishing, then rolls back its fixtures.
+The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, and removes those records afterward. Run it against an empty verification portfolio; it temporarily updates homepage assignments and restores them. Do not run it concurrently with real CMS editing.
 
-## Create and seed Supabase
+## Deployment
 
-1. Create a **new** Supabase project dedicated to this portfolio.
-2. In its SQL editor, run **every numbered SQL file in `database/supabase/migrations/` in filename order**, starting with `20261013000000_portfolio_cms.sql`. The migration creates the schema, RLS, private bucket, and CMS database functions. Apply all available migrations before using the admin.
-3. Run `database/supabase/seed.sql` in the same project.
-4. Add the project's URL and publishable key to `frontend/.env.local`.
-5. Set up the admin account as described below.
+The repository root is the Vercel root. `vercel.json` runs `npm run build` and uses `frontend/.next`. Configure the URL and publishable key for the intended environment and apply migrations separately; the frontend build does not migrate the database. Deploy to a preview first. This redesign task has not published a frontend deployment or changed domain mappings.
 
-The migration creates these tables:
-
-| Table | Purpose |
-| --- | --- |
-| `profiles` | Links an Auth user UUID to an administrator role. |
-| `site_settings` | Singleton identity, copy, availability, and contact settings. |
-| `projects` | Metadata, cover image, ordering, external links, and publication state. |
-| `project_sections` | Ordered case-study content blocks. |
-| `project_media` | Ordered visuals with alt text, captions, and layout. |
-| `capabilities` | Editable capability/process items and publication state. |
-
-The migrations also create the private `portfolio-media` bucket, access policies, and transactional CMS functions. Anonymous visitors can read published projects, their sections and media, published capabilities, and public site settings. Only authenticated admins can change portfolio content. Admin roles are provisioned through SQL, never through a public form.
-
-The canonical initial content is `database/seed-data.json`; the seed SQL is generated from it so the offline preview and the database use the same source. To update the initial fixture during development:
-
-```sh
-npm run seed:generate
-node scripts/seed.mjs --check
-```
-
-The generator writes `database/supabase/seed.sql`; `--check` fails if generated SQL has drifted. The seed uses `ON CONFLICT (id) DO NOTHING`, so rerunning it preserves existing CMS edits and adds only missing initial records. Changing the JSON fixture does not overwrite rows already in the database; use the CMS or a deliberate database update for existing content. If using the Supabase CLI locally, initialize/start the local project under `database` using the CLI's `--workdir database` option and run `supabase --workdir database db reset` to apply migrations and seed; this resets the local development database. For a hosted project, use the SQL editor steps above.
-
-For a database already seeded with the earlier two-project archive, rerun the generated seed to add the six new project records, sections, and images. Existing records and site settings remain unchanged. In the CMS, set **Site settings → Name** to `Gerikah` to adopt the current display name. Do not reset a database containing content you want to retain.
-
-## Provision the CMS administrator
-
-In the Supabase dashboard, disable new public user sign-ups in Authentication settings. Create the administrator in **Authentication → Users** with an email and a strong password, and confirm the user if required. Use the supplied portfolio email, `aldaygerikah@gmail.com`, or replace it in the SQL below with the email of the admin account you created. The [Supabase password authentication guide](https://supabase.com/docs/guides/auth/passwords) describes the underlying sign-in system.
-
-Run this in the SQL editor **after** creating the Auth user:
-
-```sql
--- Verify the real Auth UUID before granting access.
-select id, email
-from auth.users
-where email = 'aldaygerikah@gmail.com';
-
--- The profile id is the Auth user's UUID, not an unrelated generated id.
-insert into public.profiles (id, role)
-select id, 'admin'
-from auth.users
-where email = 'aldaygerikah@gmail.com'
-on conflict (id) do update set role = excluded.role;
-```
-
-The first query must return the intended user. If it returns no rows, create/confirm that user before proceeding; the insert will otherwise grant no access. Then visit `/login`, sign in with the account's password, and open `/admin`. A signed-in account without an admin profile cannot manage content.
-
-Set Supabase's Auth site URL to the eventual new deployment URL and allow the local development URL as needed. This project uses password sign-in; account provisioning and recovery remain managed through Supabase rather than a public registration flow.
-
-## CMS editing workflow
-
-1. Sign in at `/login` and open `/admin`.
-2. Edit **Site settings** for the name, role, tagline, supporting copy, bio, availability, email, LinkedIn, GitHub, résumé URL, and footer copy.
-3. Create a project as a draft. Give it a unique slug, project number, category, description, overview, role/tools, and meaningful cover alt text. Leave status blank until verified, and add year and external links only when verified.
-4. Add case-study sections and upload visuals. Give each visual meaningful alt text; use captions to explain what visitors should notice. Change display order to control the narrative and gallery sequence.
-5. Save and publish the project once its content is ready. Use the published-content preview link to review the public result. Changes revalidate the affected homepage, archive, and case-study routes.
-6. Unpublish to return a project to draft. Delete only content you intend to remove. Capabilities/process entries can also be edited, ordered, and hidden.
-
-Public case-study pages only expose published projects. Drafts can be edited in the CMS; the public preview link is for published content. Do not use a public project URL as a private draft preview.
-
-### Uploaded images and draft privacy
-
-`portfolio-media` remains **private**. The database stores the uploaded object's storage path, not an expiring URL. The server generates permission-checked signed URLs with a 300-second lifetime when rendering content. Anonymous storage access is allowed only when a published project references that object; admins can access draft media. Keep the bucket private and use CMS uploads instead of making it public. See [Supabase's bucket documentation](https://supabase.com/docs/guides/storage/buckets/fundamentals).
-
-The original seed screenshots under `frontend/public/images/` are ordinary public static files. Unpublishing a seeded project hides its content from the archive but cannot make those checked-in static assets private. For future draft visuals, use the private CMS upload flow. Unpublishing prevents new visitor reads/signatures, but does not revoke previously issued URLs or copies already downloaded. Token expiration and browser/CDN image caching are independent, so cached images can remain accessible after a token expires. See [Supabase's signed URL caching behavior](https://supabase.com/docs/guides/storage/cdn/smart-cdn#signed-urls-and-cdn-caching). Sensitive draft images should never be published as a temporary preview.
-
-## Deploy separately to Vercel
-
-1. Push this repository to its own Git repository/branch as appropriate.
-2. Import it into a **new Vercel project**, using the Next.js framework preset and this repository root.
-3. Add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for the environments that should use the new Supabase project. Keep preview content separate from production if needed by using a separate Supabase project.
-4. Keep Vercel's Root Directory at the repository root (leave it blank). The committed `vercel.json` selects Next.js, runs `npm run build`, and sets the Output Directory to `frontend/.next`, where `next build frontend` writes its manifests. These values override the corresponding dashboard settings through [project configuration](https://vercel.com/docs/project-configuration/vercel-json#outputdirectory). Deploy to the new project's Vercel preview domain.
-5. Update Supabase's Auth site URL for the new deployment, then verify public pages, login, admin access, publishing, and uploads.
-
-Keep the existing portfolio's Vercel project and domain mapping as they are while reviewing this replacement. Switch a custom domain only when this version is ready. Database migrations and seed initialization are explicit setup steps; Vercel does not run them during the application build.
-
-## Content and assets still to supply
-
-The seed uses the provided email, GitHub, and LinkedIn links. No résumé URL, project live/repository URLs, confirmed project years/statuses, or current availability claim were supplied, so those fields remain empty. The six projects added from visual evidence also leave role and tools empty until verified; the original two keep the details explicitly provided by the user. Add verified values in the CMS. There are no stock images, invented clients, testimonials, or performance metrics.
-
-All seeded visual assets are present: the real portrait, the original two projects, Ground Control Station screens, Riftbound game UI screens, and the named wireframe/flowchart works listed above. Original colours are preserved in case studies, evidence, workflow artifacts, and interactive index previews. Only desktop project covers use a monochrome idle treatment; hover/focus restores colour, and touch devices display colour immediately.
-
-## Project layout
+## Repository
 
 ```text
-frontend/              Next.js routes, components, styles, images, and source designs
-backend/               Server data, signed media, authorization, and session refresh
-api/                   Server Actions, shared contracts, and input validation
-database/              Canonical seed, Supabase migrations, SQL, and database tests
-scripts/               Seed and OpenDesign stylesheet generators
-tests/                 Validation, privacy, and browser regressions
-docs/                  CMS setup, folder structure, and design reports
+frontend/   Routes, components, styles, public assets and source designs
+backend/    Server-only data, media resolution and authorization
+api/        Server Actions, contracts and validation
+database/   Seed, migrations, ignored backups and SQL tests
+scripts/    Backup and seed utilities
+tests/      Unit, security and browser checks
+docs/       Setup and implementation reports
 ```
-
-The current public portfolio preserves the original OpenDesign export in `frontend/design/opendesign/` as handoff history. Its sticky navigation uses the white personal mark, with Work opening `/work` and About/Contact linking to their homepage sections. The hero remains project-neutral. Pages render without an overlay loader; offscreen images stay lazy and index-preview images mount only when requested by eligible hover/focus. Reduced motion removes travel and entrance animation, while readable content and navigation remain available without JavaScript. A custom 404 provides home/archive recovery.
-
-The public portfolio uses semantic landmarks, keyboard focus styles, responsive layouts, alt text, and reduced-motion support. Ongoing CMS changes belong in the database; future projects can be added through the admin without editing page components. See [the OpenDesign implementation report](docs/opendesign-adaptation.md) for inspected handoff files, all eight asset mappings, changed files, missing-input details, and verification results. The browser suite uses installed Microsoft Edge on Windows and reuses the local development server.
-
-See [CMS quick setup](docs/cms-setup.md) and [folder ownership/privacy](docs/project-structure.md). The API modules are server-side actions; admin writes require authorization. Local env files and credentials are excluded from Git.

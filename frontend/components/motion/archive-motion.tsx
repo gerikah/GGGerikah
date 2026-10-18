@@ -1,7 +1,7 @@
 ﻿"use client";
 
-import { MotionConfig } from "framer-motion";
-import Link from "next/link";
+
+
 import { useEffect, useRef, type ReactNode } from "react";
 
 export function ArchiveMotion({ children }: { children: ReactNode }) {
@@ -9,57 +9,29 @@ export function ArchiveMotion({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const container = root.current;
-    const background = container?.querySelector<HTMLElement>("[data-site-content]");
-    if (!container || !background) return;
-
-    function syncModalBackground() {
-      const modalOpen = Array.from(container!.querySelectorAll<HTMLElement>("[role='dialog'][aria-modal='true']"))
-        .some(dialog => dialog.getClientRects().length > 0);
-      // Keep the background out of the tab order until a dialog's exit completes.
-      if (background!.inert !== modalOpen) background!.inert = modalOpen;
-    }
-
-    const observer = new MutationObserver(syncModalBackground);
-    observer.observe(container, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["hidden", "aria-modal", "inert"],
-    });
-    syncModalBackground();
-    return () => observer.disconnect();
+    if (!container) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        if (!reduced.matches) (entry.target as HTMLElement).dataset.entering = "true";
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: .1 });
+    container.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
+    let frame = 0;
+    const graphic = container.querySelector<HTMLElement>(".sketch-hero__graphic");
+    const scroll = () => {
+      if (frame || reduced.matches || !graphic) return;
+      frame = requestAnimationFrame(() => { graphic.style.transform = `translateY(${Math.min(window.scrollY * .09, 60)}px)`; frame = 0; });
+    };
+    window.addEventListener("scroll", scroll, { passive: true });
+    return () => { observer.disconnect(); cancelAnimationFrame(frame); window.removeEventListener("scroll", scroll); };
   }, []);
 
-  return <MotionConfig reducedMotion="user">
-    <div className="od-public" ref={root} data-loading="false">
-      <div data-site-content>{children}</div>
-    </div>
-  </MotionConfig>;
+  return <div className="od-public" ref={root}>{children}</div>;
 }
 
-export function ProjectLink({ href, children, className, label, cursor, onNavigate }: {
-  href: string;
-  children: ReactNode;
-  className?: string;
-  label?: string;
-  cursor?: string;
-  onNavigate?: () => void;
-}) {
-  return <Link href={href} className={className} aria-label={label} data-cursor={cursor} data-project-link onNavigate={onNavigate}>{children}</Link>;
-}
-
-export function Reveal({ children, className = "", paper = false }: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-  paper?: boolean;
-}) {
-  // Case-study wrappers keep their layout, with content visible in the initial HTML.
-  return <div data-reveal className={className}>
-    {paper ? <div data-paper-reveal className="paper-reveal-content">{children}</div> : children}
-  </div>;
-}
-
-export function HeroName({ first }: { first: string }) {
-  return <h1 className="hero__name" id="hero-name"><span className="mask"><span>{first}</span></span></h1>;
+export function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div data-reveal className={className}>{children}</div>;
 }

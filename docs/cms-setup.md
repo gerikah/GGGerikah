@@ -14,3 +14,5 @@ on conflict (id) do update set role = excluded.role;
 5. Restart `npm run dev` from the repository root. Sign in at `http://localhost:3000/login`, then open `/admin` to edit site details, projects, images, publication state, and process entries.
 
 Keep the `portfolio-media` bucket private and upload future draft images through the CMS. Local `.env.local` is ignored by Git; set the same two variables in your hosting provider when deploying. Live Auth, uploads, and database RLS need a configured project before they can be tested.
+
+The portfolio project seed is intentionally empty. The editorial migration backs up and clears the previous collection; apply it once, through migration history. The connected database already has both editorial migrations applied. See [the current project workflow and backup report](editorial-redesign.md) before creating your first project or restoring earlier records.

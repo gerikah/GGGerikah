@@ -14,6 +14,12 @@ export interface SiteSettings {
 }
 
 export interface Project {
+  section_one_heading: string;
+  section_one_body: string;
+  section_two_heading: string;
+  section_two_body: string;
+  gallery_layout: "landscape" | "mixed";
+  figma_url: string;
   id: string;
   title: string;
   slug: string;
@@ -36,25 +42,8 @@ export interface Project {
   updated_at: string;
 }
 
-export const sectionTypes = [
-  "text", "image", "image_pair", "gallery", "quote", "split",
-  "tools", "full_width", "reflection", "external_link",
-] as const;
-
-export type SectionType = (typeof sectionTypes)[number];
-
-export interface ProjectSection {
-  id: string;
-  project_id: string;
-  section_type: SectionType;
-  heading: string | null;
-  body: string;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface ProjectMedia {
+  slot: number | null;
   id: string;
   project_id: string;
   storage_path: string;
@@ -68,6 +57,19 @@ export interface ProjectMedia {
   url?: string;
 }
 
+export interface HomepageContent {
+  id: 1;
+  featured_project_id: string | null;
+  secondary_one_id: string | null;
+  secondary_two_id: string | null;
+  editorial_one_path: string;
+  editorial_one_alt: string;
+  editorial_two_path: string;
+  editorial_two_alt: string;
+  editorial_one_url?: string;
+  editorial_two_url?: string;
+}
+
 export interface Capability {
   id: string;
   kind: "capability" | "process";
@@ -79,14 +81,13 @@ export interface Capability {
 
 export interface CaseStudy {
   project: Project;
-  sections: ProjectSection[];
   media: ProjectMedia[];
 }
 
 export interface SeedData {
   site_settings: SiteSettings;
   projects: Project[];
-  project_sections: ProjectSection[];
+  project_sections: never[];
   project_media: ProjectMedia[];
   capabilities: Capability[];
 }
