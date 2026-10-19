@@ -34,6 +34,15 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   })));
 });
 
+export const getProjectNavigation = cache(async (): Promise<Pick<Project, "title" | "slug">[]> => {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").select("title,slug")
+    .eq("is_published", true).order("sort_order").order("project_number");
+  if (error) dataError("project navigation", error.message);
+  return data ?? [];
+});
+
 export const getProject = cache(async (slug: string): Promise<CaseStudy | null> => {
   if (!isSupabaseConfigured()) {
     return null;

@@ -28,8 +28,14 @@ export async function resolveMediaUrl(path: string, supabase: SupabaseClient): P
 }
 
 export async function resolveProjectMedia(media: ProjectMedia[], supabase: SupabaseClient): Promise<ProjectMedia[]> {
-  return Promise.all(media.map(async (item) => ({
-    ...item,
-    url: await resolveMediaUrl(item.storage_path, supabase),
-  })));
+  return Promise.all(media.map(async (item) => {
+    try {
+      return { ...item, url: await resolveMediaUrl(item.storage_path, supabase) };
+    } catch {
+      // One unavailable object must not take down the entire case study.
+      // Keep its slot and caption so the shared frame can explain the failure.
+      console.warn(`Gallery image unavailable: ${item.id}`);
+      return { ...item, url: "" };
+    }
+  }));
 }
