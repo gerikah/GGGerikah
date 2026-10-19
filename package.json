@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev frontend",
+    "dev": "next dev frontend --webpack",
     "build": "next build frontend",
     "start": "next start frontend",
     "lint": "eslint .",
