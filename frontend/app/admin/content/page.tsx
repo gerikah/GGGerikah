@@ -15,7 +15,7 @@ export default async function SettingsPage() {
       <Field label="Short bio" name="bio" value={settings?.bio} multiline rows={5} />
       <Field label="Availability" name="availability_text" value={settings?.availability_text} hint="Use your current, verified availability. Leave blank to hide it." />
       <div className="admin-grid"><Field label="Email" name="email" value={settings?.email} type="email" /><Field label="LinkedIn URL" name="linkedin_url" value={settings?.linkedin_url} type="url" /><Field label="GitHub URL" name="github_url" value={settings?.github_url} type="url" /><Field label="Résumé URL" name="resume_url" value={settings?.resume_url} type="url" hint="Link to an accessible hosted résumé using http(s)." /></div>
-      <Field label="Footer copy" name="footer_copy" value={settings?.footer_copy} />
+      <Field label="Footer copy" name="footer_copy" value={settings?.footer_copy} multiline rows={3} />
     </ActionForm></section>}
   </>;
 }

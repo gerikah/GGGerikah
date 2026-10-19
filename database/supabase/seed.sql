@@ -6,7 +6,8 @@ begin;
 
 insert into public.site_settings (id, name, role, tagline, hero_supporting_copy, bio, availability_text, email, linkedin_url, github_url, resume_url, footer_copy)
 values
-  (1, 'Gerikah', 'UI/UX Designer & Frontend Developer', 'I design it. Then I build it.', 'I design thoughtful interfaces and build them into real, working products.', 'I''m Gerikah, a Computer Engineer who enjoys both designing and building. I bring UI/UX thinking and frontend development together, from shaping an interface to connecting the data behind it.', '', 'aldaygerikah@gmail.com', 'https://www.linkedin.com/in/gerikah-alday/', 'https://github.com/gerikah', '', 'UI/UX Designer. Frontend Developer. Computer Engineer.')
+  (1, 'Gerikah', 'UI/UX Designer & Frontend Developer', 'I design it. Then I build it.', 'I design thoughtful interfaces and build them into real, working products.', 'I''m Gerikah, a Computer Engineer who enjoys both designing and building. I bring UI/UX thinking and frontend development together, from shaping an interface to connecting the data behind it.', 'Open to freelance and full-time roles', 'aldaygerikah@gmail.com', 'https://www.linkedin.com/in/gerikah-alday/', 'https://github.com/gerikah', 'https://drive.google.com/file/d/19VlriAeDLHd77RTxFEgV0iaHv68zdYwc/view?usp=sharing', 'I design interfaces and build them in code.
+Computer engineer by training.')
 on conflict (id) do nothing;
 
 
