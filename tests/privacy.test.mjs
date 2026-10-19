@@ -20,7 +20,7 @@ test("the committed environment template contains names without credentials", ()
 test("CMS write actions authenticate before database or storage operations", () => {
   const require = createRequire(import.meta.url);
   const ts = require("typescript");
-  const source = readFileSync("api/actions/admin.ts", "utf8") + "\n" + readFileSync("api/actions/editorial.ts", "utf8");
+  const source = ["admin", "editorial", "media-library"].map(name => readFileSync(`api/actions/${name}.ts`, "utf8").replace(/^\uFEFF/, "")).join("\n");
   assert.ok(source.startsWith('"use server";'));
   const ast = ts.createSourceFile("admin.ts", source, ts.ScriptTarget.Latest, true);
   const functions = ast.statements.filter(node => ts.isFunctionDeclaration(node) && node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword));

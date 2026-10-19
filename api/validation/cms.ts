@@ -40,6 +40,14 @@ export const mediaSchema = z.object({
   layout: z.enum(["full", "half", "portrait"]), sort_order: integer,
 });
 
+// Drafts keep all length, format and range checks, but may omit publish-only copy.
+export const draftProjectSchema = projectSchema.extend({
+  short_description: text(100), role: text(70),
+  year: z.union([z.literal("").transform(() => null), projectSchema.shape.year]),
+  section_one_heading: text(40), section_one_body: text(400),
+  section_two_heading: text(40), section_two_body: text(400),
+});
+
 export const capabilitySchema = z.object({
   title: required("Title", 200), description: text(1000), kind: z.enum(["capability", "process"]),
   sort_order: integer, is_published: z.boolean(),

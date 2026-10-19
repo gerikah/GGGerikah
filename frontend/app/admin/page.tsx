@@ -1,19 +1,16 @@
 import Link from "next/link";
 import { requireAdmin } from "@backend/supabase/auth";
 import { isSupabaseConfigured } from "@backend/supabase/config";
-
 export default async function AdminDashboard({ searchParams }: { searchParams: Promise<{ notice?: string }> }) {
   if (!isSupabaseConfigured()) return null;
   const { supabase } = await requireAdmin();
-  const { data: projects, error } = await supabase.from("projects").select("id,title,slug,project_number,category,is_published,cover_image_url,sort_order").order("sort_order").order("project_number");
-  const { notice } = await searchParams;
-  const published = projects?.filter((project) => project.is_published).length ?? 0;
-  return <><div className="admin-page-heading"><div><p className="admin-eyebrow">YOUR WORK / EDITION CONTROL</p><h1>The archive.</h1><p className="admin-muted">{projects?.length ?? 0} projects · {published} published · {(projects?.length ?? 0) - published} drafts</p></div><Link href="/admin/projects/new" className="admin-button">+ New project</Link></div>
-    {notice === "deleted" && <p className="admin-message is-success" role="status">Project records deleted. Stored files were retained.</p>}
-    {notice === "project-unavailable" && <p className="admin-message" role="status">That project is no longer available. It may have been deleted or removed during a portfolio reset. Choose a project below or create a new draft.</p>}
-    {error ? <div className="admin-panel"><h2>Content could not be loaded.</h2><p>Check your Supabase connection and confirm the migration has been applied, then refresh this page.</p></div>
-      : !projects?.length ? <div className="admin-panel admin-empty"><span>NO. 00</span><h2>Your next story starts here.</h2><p>Create a draft, add real project details and visuals, then publish when it is ready.</p><Link href="/admin/projects/new" className="admin-button">Create your first draft</Link></div>
-        : <div className="admin-project-list">{projects.map((project) => <article key={project.id} className="admin-project-row"><span className="admin-project-number">{String(project.project_number).padStart(2, "0")}</span><div><div className="admin-row-title"><h2><Link href={`/admin/projects/${project.id}`}>{project.title}</Link></h2><span className={`admin-badge ${project.is_published ? "is-published" : ""}`}>{project.is_published ? "Published" : "Draft"}</span></div><p className="admin-muted">{project.category}</p>{!project.cover_image_url && <p className="admin-asset-note">Cover image needs replacing / uploading</p>}</div><div className="admin-row-actions"><Link href={`/admin/projects/${project.id}`} className="admin-link">Edit project →</Link>{project.is_published && <Link href={`/work/${project.slug}`} target="_blank" rel="noopener noreferrer" className="admin-link">Preview ↗</Link>}</div></article>)}</div>}
-    <div className="admin-shortcuts"><Link href="/admin/settings"><span>01 / SITE DETAILS</span><h2>Keep your introduction current. ↗</h2></Link><Link href="/admin/capabilities"><span>02 / CAPABILITIES & PROCESS</span><h2>Shape the way you work. ↗</h2></Link></div>
-  </>;
+  const { data: projects, error } = await supabase.from("projects").select("id,title,is_published,cover_image_url,updated_at").order("updated_at", { ascending: false });
+  if (error) throw new Error("Unable to load dashboard.");
+  const { notice } = await searchParams, drafts = projects.filter(p => !p.is_published);
+  return <><div className="admin-page-heading"><div><p className="admin-eyebrow">YOUR WORKSPACE</p><h1>Dashboard</h1><p className="admin-muted">A home for your work in progress.</p></div><Link href="/admin/projects/new" className="admin-button">+ Add new project</Link></div>
+    {notice === "deleted" && <p className="admin-message is-success" role="status">Project deleted. Its images remain in the Media Library.</p>}
+    {notice === "project-unavailable" && <p className="admin-message" role="status">That project is no longer available. Choose an existing project or create a new draft.</p>}
+    <div className="admin-stats">{[["Total projects", projects.length, "/admin/projects"], ["Published", projects.length - drafts.length, "/admin/projects?status=published"], ["Drafts", drafts.length, "/admin/projects?status=draft"]].map(([label, number, href]) => <Link href={String(href)} key={label}><span>{label}</span><strong>{number}</strong></Link>)}</div>
+    <div className="admin-quick-actions"><Link href="/admin/projects/new">+ Create a project</Link><Link href="/admin/media">↑ Upload images</Link><Link href="/admin/homepage">↗ Edit homepage</Link></div>
+    <div className="admin-grid"><section className="admin-panel"><h2>Recent projects</h2>{projects.slice(0, 5).map(p => <Link className="admin-summary-row" href={`/admin/projects/${p.id}`} key={p.id}><span>{p.title}</span><span className="admin-badge">{p.is_published ? "Published" : "Draft"}</span></Link>)}{!projects.length && <p>No projects yet. Start with a draft; you can add images later.</p>}<Link className="admin-link" href="/admin/projects">View all projects →</Link></section><section className="admin-panel"><h2>Drafts needing attention</h2>{drafts.slice(0, 5).map(p => <Link className="admin-summary-row" href={`/admin/projects/${p.id}?step=review`} key={p.id}><span>{p.title}<small>{p.cover_image_url ? "Review details and gallery" : "Add a cover image"}</small></span><span>→</span></Link>)}{!drafts.length && <p>No unfinished drafts. Your next idea can start here.</p>}</section></div></>;
 }

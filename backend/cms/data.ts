@@ -4,7 +4,7 @@ import { createClient } from "@backend/supabase/server";
 import { isSupabaseConfigured } from "@backend/supabase/config";
 import seedJson from "@database/seed-data.json";
 import { resolveMediaUrl, resolveProjectMedia } from "./media";
-import type { Capability, CaseStudy, HomepageContent, Project, SeedData, SiteSettings } from "@api/contracts/cms";
+import type { Capability, CaseStudy, HomepageContent, Project, ProjectMedia, SeedData, SiteSettings } from "@api/contracts/cms";
 
 const seed = seedJson as unknown as SeedData;
 
@@ -45,7 +45,7 @@ export const getProject = cache(async (slug: string): Promise<CaseStudy | null> 
   if (!data) return null;
   const project = data as Project;
   const [mediaResult, cover] = await Promise.all([
-    supabase.from("project_media").select("*").eq("project_id", project.id).not("slot", "is", null).order("slot"),
+    supabase.from("project_media").select("*").eq("project_id", project.id).not("slot", "is", null).order("slot").returns<ProjectMedia[]>(),
     resolveMediaUrl(project.cover_image_url, supabase),
   ]);
   if (mediaResult.error) dataError("case-study images", mediaResult.error.message);

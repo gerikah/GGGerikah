@@ -17,7 +17,7 @@ const validationModule = new Module(validationPath);
 validationModule.filename = validationPath;
 validationModule.paths = Module._nodeModulePaths(dirname(validationPath));
 validationModule._compile(compiled, validationPath);
-const { externalUrl, projectSchema, settingsSchema, mediaSchema } = validationModule.exports;
+const { externalUrl, projectSchema, draftProjectSchema, settingsSchema, mediaSchema } = validationModule.exports;
 const seed = JSON.parse(readFileSync(new URL("../database/seed-data.json", import.meta.url), "utf8"));
 const validProject = { title: "Validation fixture", slug: "validation-fixture", short_description: "A test-only input.", role: "Designer", tools: "Next.js, Figma", year: "2026", project_type: "Personal Project", status: "Concept", section_one_heading: "The Idea", section_one_body: "A concise idea.", section_two_heading: "The Build", section_two_body: "A concise build.", gallery_layout: "landscape", live_url: "", repository_url: "", figma_url: "", sort_order: 0 };
 
@@ -59,6 +59,14 @@ test("external links reject script schemes, embedded credentials, and relative a
   for (const value of ["", "https://example.com/project?view=case-study", "http://localhost:3000/work/example"]) {
     assert.equal(externalUrl.safeParse(value).success, true, value);
   }
+});
+
+test("incomplete drafts retain limits while publication still requires completed copy", () => {
+  const draft = {...validProject, short_description:"",role:"",year:"",section_one_heading:"",section_one_body:"",section_two_heading:"",section_two_body:""};
+  assert.equal(draftProjectSchema.safeParse(draft).success,true);
+  assert.equal(draftProjectSchema.parse(draft).year,null);
+  assert.equal(projectSchema.safeParse(draft).success,false);
+  for(const patch of [{role:"x".repeat(71)},{section_one_body:"x".repeat(401)},{year:"26"},{live_url:"javascript:alert(1)"},{tools:"x".repeat(26)}]) assert.equal(draftProjectSchema.safeParse({...draft,...patch}).success,false);
 });
 
 test("every public contact URL uses the same scheme and credential validation", () => {

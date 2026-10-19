@@ -19,6 +19,7 @@ secrets/
 **/secrets/
 database/backups/
 database/supabase/.temp/
+supabase/.temp/
 database/supabase/.branches/
 *.dump
 *.backup

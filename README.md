@@ -4,6 +4,8 @@ A black-and-cream editorial portfolio based on the three screenshots in `fronten
 
 See the [redesign and verification report](docs/editorial-redesign.md) for implementation details, backup locations, upload investigation and the first-project walkthrough. The [project structure](docs/project-structure.md) describes the current files and cleanup.
 
+The [CMS workspace report](docs/cms-workspace.md) covers the sidebar, three-step project editor, reusable Media Library, migration and current verification results.
+
 ## Local development
 
 ```sh
@@ -28,7 +30,7 @@ For a new database, apply files in `database/supabase/migrations/` in filename o
 
 The seed now contains only global settings and capabilities. `npm run seed:generate` regenerates SQL; `node scripts/seed.mjs --check` verifies it.
 
-Core tables are `projects`, `project_media`, `homepage_content`, `site_settings`, `capabilities` and protected administrator `profiles`. The old `project_sections` table remains for compatibility; new projects use two bounded story fields directly on `projects`. The private `portfolio-media` bucket accepts PNG/JPG/WebP up to 3 MB.
+Core tables are `projects`, `project_media`, `media_assets`, `homepage_content`, `site_settings`, `capabilities` and protected administrator `profiles`. The old `project_sections` table remains for compatibility; new projects use two bounded story fields directly on `projects`. The private `portfolio-media` bucket accepts PNG/JPG/WebP up to 3 MB.
 
 Provision an administrator in Supabase Auth, then assign that user's real UUID:
 
@@ -42,10 +44,12 @@ Sign in at `/login`. There is no public sign-up page. See [CMS setup](docs/cms-s
 
 ## Editing
 
-1. **Projects → New project**: enter the short metadata and two story sections, select a gallery layout, upload a cover with alt text, and save a draft.
-2. Fill the six landscape slots, or three portrait and two landscape slots. The cover is separate. Use the saved-page preview, then publish.
-3. **Homepage**: assign published projects to the large feature and two secondary positions; upload the independent editorial portraits.
-4. Unpublish before changing layouts or removing required visuals. Replacements and layout changes retain displaced files in Unassigned media. Deleting a project removes its records while retaining stored files.
+1. **Dashboard → Add new project → Details**: start with any information you have. Incomplete drafts are supported; opening Images saves the draft automatically.
+2. **Images**: upload a cover and fill six landscape tiles, or three portrait and two landscape tiles. Click an empty tile to open the file picker, drag a file onto a tile, or reuse an existing library image.
+3. **Review & publish**: follow the missing-content links, preview the saved project, and publish when every requirement is complete.
+4. **Media Library**: independently upload, preview, search, assign, replace or delete unused images. Identical uploads reuse existing files. References to any content prevent file deletion; retained gallery links can be removed explicitly first.
+5. **Homepage**: choose three published projects with cover previews, and manage the two independent editorial portraits. **Site Content** contains site details, capabilities and workflow entries.
+6. Unpublish before changing layouts or removing required visuals. Replacements and layout changes retain displaced files. Deleting a project removes its records while retaining stored files.
 
 Only published projects appear at `/work` and `/work/[slug]`. Private previews under `/admin/projects/[id]/preview` require administrator authentication. Public media URLs are permission-checked and expire after five minutes; already downloaded or cached images cannot be revoked by unpublishing.
 
@@ -61,7 +65,7 @@ npm run start
 npx playwright test tests/browser/editorial.spec.ts
 ```
 
-The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, and removes those records afterward. Run it against an empty verification portfolio. Homepage mutations run only when all homepage slots and editorial images are empty; configured homepage content is preserved and that portion of the test is annotated as skipped. Do not run it concurrently with real CMS editing.
+The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, then removes its fixtures. It temporarily changes one homepage portrait and the featured project, restores their original values, and asserts that homepage content, site settings and capabilities remain intact. Prefer a verification environment and do not run it concurrently with real CMS editing. Run against the production build for consistent browser verification.
 
 ## Deployment
 

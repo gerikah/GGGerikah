@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@backend/supabase/auth";
 import { uploadImage } from "@backend/cms/upload";
-import { formValues, projectFields, projectSchema, mediaSchema } from "@api/validation/cms";
+import { formValues, projectFields, draftProjectSchema, mediaSchema } from "@api/validation/cms";
 import type { ActionState } from "@api/contracts/action-state";
 const uuid = z.uuid();
 function refresh() { revalidatePath("/", "layout"); revalidatePath("/admin", "layout"); }
@@ -14,9 +14,11 @@ function failure(error: { code?: string; message: string }): ActionState { retur
 export async function saveEditorialProject(id: string | null, _state: ActionState, form: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
   if (id && !uuid.safeParse(id).success) return { message: "Invalid project." };
-  const parsed = projectSchema.safeParse(formValues(form, projectFields));
+  const candidate = form.get("draft_id");
+  const projectId = id ?? (uuid.safeParse(candidate).success ? String(candidate) : randomUUID());
+  const values = formValues(form, projectFields);
+  const parsed = draftProjectSchema.safeParse({ ...values, title: values.title.trim() || "Untitled project", slug: values.slug.trim() || `draft-${projectId}` });
   if (!parsed.success) return { message: "Check the fields below. Your values have been preserved.", errors: parsed.error.flatten().fieldErrors };
-  const projectId = id ?? randomUUID();
   const file = form.get("cover_file");
   let path: string | null = null;
   let alt: string | null = null;
@@ -29,9 +31,10 @@ export async function saveEditorialProject(id: string | null, _state: ActionStat
     path = upload.path!;
   }
   const { error } = await supabase.rpc("save_editorial_project", { p_id: projectId, p_details: parsed.data, p_cover_path: path, p_cover_alt: alt });
-  if (error) { if (path) await supabase.storage.from("portfolio-media").remove([path]); return failure(error); }
+  if (error) { return failure(error); }
   refresh();
-  if (!id) redirect(`/admin/projects/${projectId}?notice=created`);
+  const next = form.get("next_step");
+  if (!id || next === "images" || next === "review") redirect(`/admin/projects/${projectId}?step=${next === "images" || next === "review" ? next : "details"}&notice=saved`);
   return { success: true, message: "Project saved. Displaced gallery images remain in Unassigned media." };
 }
 
@@ -45,7 +48,7 @@ export async function uploadCover(id: string, _state: ActionState, form: FormDat
   const upload = await uploadImage(supabase, form.get("file"), id);
   if (upload.error) return { message: upload.error };
   const { error } = await supabase.from("projects").update({ cover_image_url: upload.path, cover_alt: alt.data }).eq("id", id).select("id").single();
-  if (error) { await supabase.storage.from("portfolio-media").remove([upload.path!]); return failure(error); }
+  if (error) { return failure(error); }
   refresh(); return { success: true, message: "Cover uploaded and saved. The previous file is retained in storage." };
 }
 
@@ -60,7 +63,7 @@ export async function uploadGallerySlot(id: string, slot: number, _state: Action
   const upload = await uploadImage(supabase, form.get("file"), id);
   if (upload.error) return { message: upload.error };
   const { data, error } = await supabase.from("project_media").insert({ ...parsed.data, project_id: id, storage_path: upload.path, slot: null }).select("id").single();
-  if (error || !data) { await supabase.storage.from("portfolio-media").remove([upload.path!]); return failure(error!); }
+  if (error || !data) { return failure(error!); }
   const assigned = await supabase.rpc("assign_gallery_image", { p_project_id: id, p_media_id: data.id, p_slot: slot });
   if (assigned.error) { refresh(); return { message: `Uploaded to Unassigned media, but could not fill the slot: ${assigned.error.message}. The original slot is unchanged.` }; }
   refresh(); return { success: true, message: "Image saved in the gallery slot. Any replaced image is in Unassigned media." };
@@ -99,6 +102,16 @@ export async function saveEditorialImage(position: "one" | "two", _state: Action
   let path = "";
   if (!remove) { const upload = await uploadImage(supabase, form.get("file"), "homepage"); if (upload.error) return { message: upload.error }; path = upload.path!; }
   const { error } = await supabase.from("homepage_content").update({ [`editorial_${position}_path`]: path, [`editorial_${position}_alt`]: remove ? "" : alt.data }).eq("id", 1);
-  if (error) { if (path) await supabase.storage.from("portfolio-media").remove([path]); return failure(error); }
+  if (error) { return failure(error); }
   refresh(); return { success: true, message: remove ? "Editorial image removed. Its placeholder is visible." : "Editorial image saved." };
+}
+
+export async function saveEditorialAlt(position: "one" | "two", _state: ActionState, form: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  if (!["one","two"].includes(position)) return { message: "Invalid image position." };
+  const alt = z.string().trim().min(1).max(160).safeParse(form.get("alt_text"));
+  if (!alt.success) return { message: "Add alt text between 1 and 160 characters." };
+  const result = await supabase.from("homepage_content").update({ [`editorial_${position}_alt`]: alt.data }).eq("id",1);
+  if(result.error) return failure(result.error);
+  refresh(); return { success: true, message: "Editorial image alt text saved." };
 }

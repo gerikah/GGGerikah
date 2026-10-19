@@ -22,7 +22,7 @@ export function WorkflowRoute({ children }: { children: ReactNode }) {
           timers.set(stage, window.setTimeout(() => {
             delete stage.dataset.entering;
             timers.delete(stage);
-          }, 400));
+          }, 700));
         }
         observer.unobserve(stage);
       }
