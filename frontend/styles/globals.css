@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 /* Shared foundation. Public art direction and CMS forms have separate styles. */
-:root {--black:#101010;--charcoal:#171717;--gray:#aaa69f;--paper:#d8d3c8;--line:#56544f;--font-sans:"Poppins",Arial,sans-serif;--font-mono:"Space Mono",monospace;--gutter:clamp(18px,4vw,80px)}
+:root {--black:#101010;--charcoal:#171717;--gray:#a6a6a6;--paper:#d3d3d3;--line:#545454;--font-sans:"Poppins",Arial,sans-serif;--font-mono:"Space Mono",monospace;--gutter:clamp(18px,4vw,80px)}
 @theme inline {--color-background:var(--black);--color-foreground:var(--paper);--font-sans:var(--font-sans);--font-mono:var(--font-mono)}
 * {box-sizing:border-box}
-html {scroll-behavior:smooth;scroll-padding-top:24px}
+html {color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:24px}
 body {margin:0;background:var(--black);color:var(--paper);font-family:var(--font-sans);font-weight:400;-webkit-font-smoothing:antialiased}
 ::selection {background:var(--paper);color:var(--black)}
 a {color:inherit;text-decoration:none}
@@ -17,3 +17,7 @@ h1,h2,h3,h4,p,figure {margin:0}
 .mono {font-family:var(--font-mono);font-size:12px;line-height:1.6;letter-spacing:.04em}
 .sr-only {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}}
+
+/* The supplied halftone stays beneath content, at a quieter contrast than the artwork. */
+:root{--texture-image:url('/images/textures/halftone.jpg');--texture-size:736px 1147px;--texture-surface:linear-gradient(#101010f2,#101010f2),var(--texture-image)}
+body{background-image:var(--texture-surface);background-size:auto,var(--texture-size)}

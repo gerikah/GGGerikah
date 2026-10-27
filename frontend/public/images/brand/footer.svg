@@ -9,9 +9,9 @@
 </mask>
 <g mask="url(#mask0_82_344)">
 <g filter="url(#filter0_f_82_344)">
-<use xlink:href="#stroke2_82_344" fill="#7C170D"/>
-<use xlink:href="#stroke3_82_344" fill="#151946"/>
-<use xlink:href="#stroke4_82_344" fill="#D5CDC3"/>
+<use xlink:href="#stroke2_82_344" fill="#393939"/>
+<use xlink:href="#stroke3_82_344" fill="#151515"/>
+<use xlink:href="#stroke4_82_344" fill="#808080"/>
 <mask id="stroke5_82_344" fill="white">
 <use xlink:href="#stroke2_82_344"/>
 <use xlink:href="#stroke3_82_344"/>
