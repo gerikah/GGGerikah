@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Shared foundation. Public art direction and CMS forms have separate styles. */
-:root {--black:#101010;--charcoal:#171717;--gray:#a6a6a6;--paper:#d3d3d3;--line:#545454;--font-sans:"Poppins",Arial,sans-serif;--font-mono:"Space Mono",monospace;--gutter:clamp(18px,4vw,80px)}
+:root {--black:#080808;--charcoal:#121212;--gray:#a6a6a6;--paper:#d3d3d3;--line:#545454;--font-sans:"Poppins",Arial,sans-serif;--font-mono:"Space Mono",monospace;--gutter:clamp(18px,4vw,80px)}
 @theme inline {--color-background:var(--black);--color-foreground:var(--paper);--font-sans:var(--font-sans);--font-mono:var(--font-mono)}
 * {box-sizing:border-box}
 html {color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:24px}
@@ -19,5 +19,5 @@ h1,h2,h3,h4,p,figure {margin:0}
 @media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}}
 
 /* The supplied halftone stays beneath content, at a quieter contrast than the artwork. */
-:root{--texture-image:url('/images/textures/halftone.jpg');--texture-size:736px 1147px;--texture-surface:linear-gradient(#101010f2,#101010f2),var(--texture-image)}
+:root{--texture-image:url('/images/textures/halftone.jpg');--texture-size:736px 1147px;--texture-surface:linear-gradient(#080808fa,#080808fa),var(--texture-image)}
 body{background-image:var(--texture-surface);background-size:auto,var(--texture-size)}

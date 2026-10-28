@@ -18,7 +18,7 @@ export function Header() {
     return () => observer.disconnect();
   }, []);
   const links = [
-    { label: "Work", href: "/work", target: "work" },
+    { label: "Work", href: home ? "#selected-work" : "/work", target: "work" },
     { label: "About", href: home ? "#about" : "/#about", target: "about" },
     { label: "Contact", href: home ? "#contact" : "/#contact", target: "contact" },
   ];

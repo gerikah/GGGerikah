@@ -1,6 +1,6 @@
 /* Preserve the supplied artwork, Space Mono/Poppins pairing and brand gradients. */ /* taste-skill-ignore: user-specified brand typography/gradient. */
 .od-public {
-  --bg:#101010; --ink:#eeeeee; --muted:#b8b8b8;
+  --bg:#080808; --ink:#eeeeee; --muted:#b8b8b8;
   --section-space:clamp(56px,6vw,88px);
   --type-small:14px; --type-body:16px;
   --type-lead:clamp(18px,1.5vw,20px); --type-heading:clamp(26px,3.7vw,52px);
@@ -19,7 +19,7 @@
 .skip{position:fixed;top:-100px;left:24px;z-index:100;background:var(--ink);color:var(--bg);padding:16px}
 .skip:focus{top:16px}
 .nav-trigger{position:absolute;top:50px;width:1px;height:1px} /* taste-skill-ignore: invisible scroll observer target, not a divider. */
-.nav-shell{position:sticky;top:0;z-index:20;background:#101010f5}
+.nav-shell{position:sticky;top:0;z-index:20;background:#080808f7}
 .nav{width:calc(100% - var(--gutter)*2);max-width:1440px;margin:auto;min-height:88px;display:flex;align-items:center;justify-content:space-between}
 .nav__brand{display:block;padding-block:8px}
 .nav__logo{width:42px;height:42px;transition:transform .3s var(--ease-out)}
@@ -57,7 +57,7 @@
 .project-caption h3{overflow-wrap:anywhere}
 
 .gradient-panel{background:#141414 url('/images/brand/gradient.svg') center/cover no-repeat}
-.design-build.gradient-panel,.case-story.gradient-panel{background:radial-gradient(ellipse at 0 0,#383838,transparent 65%),radial-gradient(ellipse at 0 100%,#252525,transparent 60%),linear-gradient(100deg,#181818,#101010)} /* taste-skill-ignore: user-specified brand typography/gradient. */
+.design-build.gradient-panel,.case-story.gradient-panel{background:radial-gradient(ellipse at 0 0,#181818,transparent 65%),radial-gradient(ellipse at 0 100%,#111111,transparent 60%),linear-gradient(100deg,#0c0c0c,#080808)} /* taste-skill-ignore: user-specified brand typography/gradient. */
 .two-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,6vw,88px)}
 .design-build{padding-block:var(--section-space)}
 .design-build h2{margin-bottom:24px}
@@ -96,8 +96,8 @@
 .stack-item img[src$="/nextjs.svg"],.stack-item img[src$="/vercel.svg"]{filter:invert(1)}
 
 /* Original footer geometry, recolored in grayscale to match the supplied texture. */
-.footer-wordmark{width:100%;aspect-ratio:1730/170.2;background:url('/images/brand/footer.svg') left top/100% auto no-repeat}
-.contact{background:url('/images/brand/footer-panel.svg') center/100% 100% no-repeat;padding-block:64px 28px;scroll-margin-top:88px;color:#e3e3e3}
+.footer-wordmark{width:100%;aspect-ratio:1730/170.2;background:linear-gradient(#08080899,#08080899),url('/images/brand/footer.svg') left top/100% auto no-repeat}
+.contact{background:linear-gradient(110deg,#080808e6,#080808f2),url('/images/brand/footer-panel.svg') center/100% 100% no-repeat;padding-block:64px 28px;scroll-margin-top:88px;color:#e3e3e3}
 .contact-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start;gap:clamp(24px,5vw,72px)}
 .od-public .contact h2{font-family:var(--font-sans);font-size:var(--type-heading);font-weight:400;line-height:1.15;letter-spacing:-.04em}
 .contact p{font-size:var(--type-body);margin-top:24px;max-width:48ch}
@@ -290,7 +290,7 @@
 
 /* Keep texture underneath copy and controls; no screen-wide filter or fixed overlay. */
 .gradient-panel,.editorial-footer{position:relative;isolation:isolate}
-.gradient-panel::before,.editorial-footer::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:var(--texture-image) center/var(--texture-size) repeat;opacity:.065}
+.gradient-panel::before,.editorial-footer::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:var(--texture-image) center/var(--texture-size) repeat;opacity:.02}
 .gradient-panel>.wrap,.editorial-footer .contact>.wrap{position:relative;z-index:1}
 .hero-tagline-artwork,.nav__logo,.stack-mark img{filter:grayscale(1)}
 @media(max-width:600px){:root{--texture-size:552px 860.25px}}
