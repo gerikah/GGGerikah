@@ -62,6 +62,7 @@ export interface HomepageContent {
   featured_project_id: string | null;
   secondary_one_id: string | null;
   secondary_two_id: string | null;
+  secondary_three_id: string | null;
   editorial_one_path: string;
   editorial_one_alt: string;
   editorial_two_path: string;
@@ -72,9 +73,11 @@ export interface HomepageContent {
 
 export interface Capability {
   id: string;
-  kind: "capability" | "process";
+  kind: "capability" | "process" | "tool";
   title: string;
   description: string;
+  logo_key: string;
+  proficiency_level: number | null;
   sort_order: number;
   is_published: boolean;
 }

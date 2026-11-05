@@ -9,7 +9,8 @@ The administration area now provides a fixed collapsible sidebar, mobile drawer,
 - **Review & publish:** saved metadata, cover and compact gallery previews; actionable missing-content links; private preview; draft exit; publication confirmation. Publishing stays disabled until required information is complete and is checked again on the server and in the database.
 - **Media Library:** independent upload, filename search, usage/project filters, full previews, dimensions, size, format and upload date. Content hashes reuse identical stored files. Assignment supports covers, gallery slots and either homepage portrait. Replacing a library image updates all its uses transactionally, retaining the original file.
 - **Homepage:** three selected-work tiles with live cover previews and two portrait image tiles. Static branding assets have no new controls.
-- **Site Content:** existing site details, capabilities and workflow records remain editable. The public homepage's fixed eight-step method remains unchanged; the workflow editor explicitly identifies its saved records as separate from that fixed design. Settings summarizes the account and existing media configuration.
+- **Site Content:** site details, capabilities, Tools and Technology entries, and workflow steps are editable. Tools can select an available Devicon logo and an optional 1–5 proficiency level. Published workflow steps appear in an interactive “From question to delivery” selector on the homepage.
+- **Homepage:** choose up to four different published projects in display order. Selected Works displays only these CMS assignments; no hard-coded case-study drafts are shown.
 
 Unsaved form changes trigger navigation warnings. Destructive operations use native confirmation dialogs. A confirmed discard closes and resets the image editor. Save controls remain near the bottom of the editor viewport.
 

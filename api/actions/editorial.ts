@@ -82,12 +82,17 @@ export async function assignGallery(id: string, mediaId: string, _state: ActionS
 
 export async function saveHomepage(_state: ActionState, form: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
-  const fields = ["featured_project_id", "secondary_one_id", "secondary_two_id"];
+  const fields = ["featured_project_id", "secondary_one_id", "secondary_two_id", "secondary_three_id"];
   const values = fields.map(f => String(form.get(f) || ""));
   if (values.some(v => v && !uuid.safeParse(v).success)) return { message: "Choose a published project or an empty slot." };
   const selected = values.filter(Boolean);
   if (new Set(selected).size !== selected.length) return { message: "Choose a different project for each homepage slot." };
-  const { error } = await supabase.from("homepage_content").update(Object.fromEntries(fields.map((f,i) => [f, values[i] || null]))).eq("id", 1);
+  if (selected.length) {
+    const { data: published, error: lookupError } = await supabase.from("projects").select("id").in("id", selected).eq("is_published", true);
+    if (lookupError) return failure(lookupError);
+    if (!published || published.length !== selected.length) return { message: "A selected project is no longer published. Choose another project or clear its slot." };
+  }
+  const { error } = await supabase.from("homepage_content").update(Object.fromEntries(fields.map((f,i) => [f, values[i] || null]))).eq("id", 1).select("id").single();
   if (error) return failure(error);
   refresh(); return { success: true, message: "Homepage projects saved." };
 }

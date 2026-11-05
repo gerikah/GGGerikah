@@ -27,6 +27,9 @@ test('CMS migration preserves content; drafts, reuse, replacement, layout and RL
   assert.equal((await db.query('select * from public.capabilities')).rows.length,1);
   assert.equal((await db.query('select * from public.media_assets')).rows.length,1);
   await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',false)`);
+  await db.query("insert into public.capabilities(kind,title,logo_key,proficiency_level,is_published) values('tool','React','react',4,true)");
+  assert.equal((await db.query("select proficiency_level from public.capabilities where kind='tool'")).rows[0].proficiency_level,4);
+  await assert.rejects(db.query("insert into public.capabilities(kind,title,proficiency_level) values('tool','Invalid rating',6)"));
   const id='00000000-0000-4000-8000-000000000002';
   const draft={title:'Draft fixture',slug:'draft-fixture',short_description:'',role:'',tools:[],year:null,project_type:'Personal Project',status:'Concept',section_one_heading:'',section_one_body:'',section_two_heading:'',section_two_body:'',gallery_layout:'landscape',live_url:'',repository_url:'',figma_url:'',sort_order:0};
   await db.query('select public.save_editorial_project($1,$2::jsonb)',[id,JSON.stringify(draft)]);
@@ -40,6 +43,9 @@ test('CMS migration preserves content; drafts, reuse, replacement, layout and RL
   const complete={...draft,short_description:'Subtitle',role:'Designer',year:2026,section_one_heading:'Idea',section_one_body:'Idea body',section_two_heading:'Build',section_two_body:'Build body'};
   await db.query('select public.save_editorial_project($1,$2::jsonb)',[id,JSON.stringify(complete)]);
   await db.query('update public.projects set is_published=true where id=$1',[id]);
+  await db.query('update public.homepage_content set secondary_three_id=$1 where id=1',[id]);
+  assert.equal((await db.query('select secondary_three_id from public.homepage_content where id=1')).rows[0].secondary_three_id,id);
+  await assert.rejects(db.query('update public.homepage_content set featured_project_id=$1 where id=1',[id]),/homepage_projects_distinct/);
   await assert.rejects(db.query('select public.save_editorial_project($1,$2::jsonb)',[id,JSON.stringify({...complete,role:''})]));
   await db.exec('set role anon');
   assert.equal((await db.query('select * from public.projects')).rows.length,1);

@@ -4,16 +4,17 @@ import { mkdir } from "node:fs/promises";
 const widths = [360, 390, 768, 1024, 1440];
 
 async function checkFrames(page: Page) {
-  const frames = await page.locator("main [data-media-variant]").evaluateAll(elements => elements.map(element => {
-    const rect = element.getBoundingClientRect();
-    const expected = element.getAttribute("data-media-variant") === "portrait" ? 9 / 17 : 2;
-    return { error: Math.abs(rect.width - rect.height * expected), width: rect.width, height: rect.height };
-  }));
-  expect(frames.length).toBeGreaterThan(0);
-  for (const frame of frames) {
-    expect(frame.width).toBeGreaterThan(0);
-    expect(frame.error).toBeLessThan(0.15);
-  }
+  await expect.poll(() => page.locator("main [data-media-variant]").evaluateAll(elements => elements.length > 0 && elements.every(element => {
+    // Measure before the card stack's rotation; selected covers follow their source ratio.
+    const style = getComputedStyle(element);
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+    const image = element.querySelector<HTMLImageElement>("img");
+    const naturalCover = element.closest(".flow-project-card") && image?.naturalWidth && image.naturalHeight;
+    const expected = naturalCover ? image!.naturalWidth / image!.naturalHeight
+      : element.getAttribute("data-media-variant") === "portrait" ? 9 / 17 : 2;
+    return width > 0 && height > 0 && Math.abs(width - height * expected) < 0.15;
+  }))).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(await page.locator("main .media-frame img").evaluateAll(images => images.every(image => {
     const style = getComputedStyle(image);

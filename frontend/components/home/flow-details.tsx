@@ -1,45 +1,123 @@
 "use client";
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { portfolio as c } from '@frontend/content/portfolio';
+import '@frontend/styles/flow-details-polish.css';
 
-function LocalTime() {
-  const clock=useRef<HTMLTimeElement>(null);
-  useEffect(()=>{
-    const formatter=new Intl.DateTimeFormat('en-PH',{timeZone:'Asia/Manila',hour:'2-digit',minute:'2-digit',hour12:true});
-    const update=()=>{if(clock.current){const now=new Date();clock.current.dateTime=now.toISOString();clock.current.textContent=formatter.format(now)+' · Manila (UTC+8)';}};
-    update();const timer=window.setInterval(update,30000);
-    return()=>window.clearInterval(timer);
-  },[]);
-  return <time ref={clock}>Manila · UTC+8</time>;
+type ToolDisplay = { id: string; title: string; logo_key: string | null; description: string | null };
+
+export function AboutDetails({ resumeUrl }: { resumeUrl: string }) {
+    const [degree, ...degreeDetails] = c.about.education[0].split(' · ');
+    const [university, ...universityDetails] = c.about.education[1].split(' · ');
+    return (
+        <div className="flow-about__details flow-details-polished">
+            <h2 id="flow-about-title">{c.about.title}</h2>
+            <p className="flow-bio">{c.about.bio}</p>
+            <p className="flow-bio flow-bio--support">{c.about.bioSupport}</p>
+            <section className="flow-education" aria-labelledby="flow-education-title">
+                <h3 id="flow-education-title">Education</h3>
+                <p className="flow-education__degree">{degree}</p>
+                <p className="flow-education__school">{university}</p>
+                <p className="flow-education__metadata">{[...degreeDetails, ...universityDetails].join(' · ')}</p>
+            </section>
+            <dl className="flow-facts">
+                <div><dt>{c.about.roleTitle}</dt><dd>{c.about.role}</dd></div>
+                <div><dt>{c.about.basedTitle}</dt><dd>{c.about.based}</dd></div>
+                <div><dt>{c.about.howTitle}</dt><dd>{c.about.how}</dd></div>
+            </dl>
+            <p className="flow-about__deliverable"><strong>{c.about.receiveTitle}</strong>{c.about.receive}</p>
+            {resumeUrl && <a className="flow-text-link" href={resumeUrl} target="_blank" rel="noopener noreferrer">{c.about.resume} ↗</a>}
+        </div>
+    );
 }
 
-export function AboutDetails({bio,role,resumeUrl}:{bio:string;role:string;resumeUrl:string}) {
-  return <div className="flow-about__details"><h2 id="flow-about-title">About</h2><p className="flow-bio">{bio}</p>
-    <dl className="flow-facts">
-      <div><dt>Title & education</dt><dd>BS Computer Engineering<br/>Network Administration · 2026</dd><dd>Polytechnic University of the Philippines<br/>Sta. Mesa, Manila</dd></div>
-      <div><dt>Role</dt><dd>{role}</dd><dd className="flow-fact-note">UI/UX, technical documentation, and web development.</dd></div>
-      <div><dt>Way & workflow</dt><dd>Understand the problem, map the flow, design the interface, build, test, and refine.</dd></div>
-      <div><dt>Handover</dt><dd>Design files, documented user flows, responsive interfaces, and clear implementation notes.</dd></div>
-      <div><dt>Local time</dt><dd><LocalTime/></dd></div>
-      <div><dt>Achievements & certificates</dt><dd>30+ freelance technical and academic engagements.</dd><dd>AWS Academy Cloud Foundations · May 2026</dd><dd>Civil Service Professional Eligibility · March 2026</dd></div>
-    </dl>
-    {resumeUrl && <a className="flow-text-link" href={resumeUrl} target="_blank" rel="noopener noreferrer">View résumé <span aria-hidden="true">↗</span></a>}
-  </div>;
+export function AboutCredentials() {
+    return (
+        <aside className="flow-about__credentials flow-details-polished" aria-labelledby="flow-credentials-title">
+            <h3 id="flow-credentials-title">{c.about.achievementsTitle}</h3>
+            <ul>
+                {c.about.achievements.map((item, index) => (
+                    <li key={item}>
+                        <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                        <p>{item}</p>
+                    </li>
+                ))}
+            </ul>
+        </aside>
+    );
 }
 
-type Tool = {name:string;icon?:string};
-// Verified against the existing portfolio and the owner's linked résumé.
-const toolGroups:{title:string;tools:Tool[]}[]=[
-  {title:'Frontend',tools:[{name:'React',icon:'react'},{name:'Next.js',icon:'nextjs'},{name:'TypeScript',icon:'typescript'},{name:'JavaScript',icon:'javascript'},{name:'HTML',icon:'html5'},{name:'CSS',icon:'css3'}]},
-  {title:'Backend & database',tools:[{name:'Node.js',icon:'nodejs'},{name:'Fastify'},{name:'Supabase',icon:'supabase'},{name:'PostgreSQL',icon:'postgresql'},{name:'MySQL'}]},
-  {title:'AI tools',tools:[{name:'Codex'}]},
-  {title:'Deployment & version control',tools:[{name:'Vercel',icon:'vercel'},{name:'Git',icon:'git'},{name:'GitHub'}]},
-  {title:'IDE',tools:[{name:'VS Code'}]},
-  {title:'Currently learning',tools:[{name:'Codex workflows'}]},
+// Classify only published CMS records; matching a category never adds a technology.
+const toolGroups = [
+    { title: 'Design & planning', pattern: /figma|figjam|canva|design|wireframe|prototyp|planning/ },
+    { title: 'Frontend', pattern: /html|css|javascript|typescript|react|nextjs|next\.js|\bvite\b|vue|svelte|angular|tailwind/ },
+    { title: 'Backend & data', pattern: /node|supabase|postgres|upstash|redis|mysql|sql|mongo|firebase|fastify|express|prisma|python|php/ },
+    { title: 'Testing', pattern: /playwright|jest|vitest|cypress|testing|test/ },
+    { title: 'Deployment', pattern: /vercel|netlify|docker|cloudflare|aws|azure|hosting|deploy/ },
+    { title: 'Version control', pattern: /github|gitlab|bitbucket|\bgit\b/ },
+    { title: 'AI & workflow', pattern: /codex|openai|chatgpt|claude|copilot|automation/ },
+    { title: 'Development environment', pattern: /vscode|vs code|visual studio|cursor|webstorm|intellij|editor|ide/ },
 ];
-export function DeveloperTools() {
-  return <section className="flow-branch-copy" aria-labelledby="flow-tools-title"><h2 id="flow-tools-title">Tools & tech</h2>
-    <dl className="flow-tools">{toolGroups.map(group=><div key={group.title}><dt>{group.title}</dt><dd>{group.tools.length ? <ul className="flow-tool-list">{group.tools.map(tool=><li key={tool.name}>{tool.icon && <Image src={'/images/stack/'+tool.icon+'.svg'} alt="" aria-hidden="true" width={15} height={15}/>}<span>{tool.name}</span></li>)}</ul> : <span className="flow-fact-note">To be added</span>}</dd></div>)}</dl>
-  </section>;
+const availableLogos = new Set(['figma', 'javascript', 'html5', 'css3', 'react', 'nextjs', 'typescript', 'nodejs', 'supabase', 'postgresql', 'git', 'vercel']);
+
+function ToolIcon({ tool }: { tool: ToolDisplay }) {
+    const words = tool.title.trim().split(/[\s.-]+/);
+    const initials = (words.length > 1 ? words.slice(0, 2).map(word => word[0]).join('') : tool.title.slice(0, 2)).toUpperCase();
+    return (
+        <span className="flow-tool-icon" aria-hidden="true">
+            {tool.logo_key && availableLogos.has(tool.logo_key)
+                ? <Image src={`/images/stack/${tool.logo_key}.svg`} alt="" width={24} height={24} />
+                : <span className="flow-tool-fallback">{initials}</span>}
+        </span>
+    );
+}
+
+export function DeveloperTools({ tools, githubUrl, id }: { tools: ToolDisplay[]; githubUrl: string; id?: string }) {
+    const categories = new Map<string, ToolDisplay[]>();
+    for (const tool of tools) {
+        const searchable = `${tool.title} ${tool.logo_key || ''}`.toLowerCase();
+        const category = toolGroups.find(group => group.pattern.test(searchable))?.title || 'Development tools';
+        categories.set(category, [...(categories.get(category) || []), tool]);
+    }
+    const groups = [...toolGroups.map(group => group.title), 'Development tools']
+        .filter(title => categories.has(title))
+        .map(title => ({ title, tools: categories.get(title)! }));
+
+    return (
+        <section id={id} className="flow-branch-copy flow-panel flow-panel--tools flow-details-polished" aria-labelledby="flow-tools-title">
+            <div className="flow-tools-heading">
+                <p className="flow-kicker">Capability / Tools and technology</p>
+                <h2 id="flow-tools-title">From flows to function.</h2>
+                <p>I bring interface design and development together so the experience stays clear from the first sketch to the working website.</p>
+            </div>
+            <div className="flow-branch-descriptions">
+                <p className="flow-branch-description flow-branch-description--design"><strong>UI/UX &amp; Flows</strong>Organizing information, mapping user journeys, and designing interfaces that make the next step clear.</p>
+                <p className="flow-branch-description flow-branch-description--build"><strong>Development</strong>Building responsive interfaces, reusable components, and the functionality behind the experience.</p>
+            </div>
+            <div className="flow-tools-board">
+                <div className="flow-tools-groups">
+                    {groups.map(group => (
+                        <section className="flow-tools-group" key={group.title} aria-label={group.title}>
+                            <h3>{group.title}</h3>
+                            <ul>
+                                {group.tools.map(tool => (
+                                    <li key={tool.id} title={tool.description || undefined}>
+                                        <ToolIcon tool={tool} />
+                                        <span>{tool.title}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    ))}
+                </div>
+                <aside className="flow-github-history" aria-labelledby="flow-github-title">
+                    <div>
+                        <h3 id="flow-github-title">Explore the code.</h3>
+                        <p>Take a closer look at the code behind my projects and how they’re put together.</p>
+                    </div>
+                    {githubUrl && <a href={githubUrl} target="_blank" rel="noopener noreferrer">View GitHub profile <span aria-hidden="true">↗</span></a>}
+                </aside>
+            </div>
+        </section>
+    );
 }

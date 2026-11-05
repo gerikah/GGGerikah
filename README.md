@@ -1,6 +1,6 @@
 # Gerikah — Design & Development
 
-A black-and-cream editorial portfolio based on the three screenshots in `frontend/design/assets/NEW ASSETS/`, with Space Mono headings and Poppins body text. Projects are created and published through the existing authenticated Supabase CMS. The archive starts empty; homepage placeholders remain until configured.
+A paper-and-ink portfolio with a portrait landing page, an expanding flowchart, and CMS-selected work. Space Mono headings and Poppins body text follow the supplied references in `frontend/REFERENCE/`. Published projects and contact destinations come from the authenticated Supabase CMS; homepage copy lives in `frontend/content/portfolio.ts`.
 
 See the [redesign and verification report](docs/editorial-redesign.md) for implementation details, backup locations, upload investigation and the first-project walkthrough. The [project structure](docs/project-structure.md) describes the current files and cleanup.
 
@@ -48,7 +48,7 @@ Sign in at `/login`. There is no public sign-up page. See [CMS setup](docs/cms-s
 2. **Images**: upload a cover and fill six landscape tiles, or three portrait and two landscape tiles. Click an empty tile to open the file picker, drag a file onto a tile, or reuse an existing library image.
 3. **Review & publish**: follow the missing-content links, preview the saved project, and publish when every requirement is complete.
 4. **Media Library**: independently upload, preview, search, assign, replace or delete unused images. Identical uploads reuse existing files. References to any content prevent file deletion; retained gallery links can be removed explicitly first.
-5. **Homepage**: choose three published projects with cover previews, and manage the two independent editorial portraits. **Site Content** contains site details, capabilities and workflow entries.
+5. **Homepage**: choose up to four published projects with cover previews, and manage the two independent editorial portraits. **Site Content** contains site details, capabilities, Tools and Technology (including logo and optional 1–5 proficiency), and workflow steps.
 6. Unpublish before changing layouts or removing required visuals. Replacements and layout changes retain displaced files. Deleting a project removes its records while retaining stored files.
 
 Only published projects appear at `/work` and `/work/[slug]`. Private previews under `/admin/projects/[id]/preview` require administrator authentication. Public media URLs are permission-checked and expire after five minutes; already downloaded or cached images cannot be revoked by unpublishing.
@@ -62,14 +62,14 @@ npm test
 npm run privacy:check
 npm run build
 npm run start
-npx playwright test tests/browser/editorial.spec.ts
+npx playwright test tests/browser/flow-journey.spec.ts
 ```
 
 The browser suite uses installed Microsoft Edge on Windows. The CMS lifecycle test requires the local private `SUPABASE_SECRET_KEY`: it creates a temporary verification administrator, project and images, exercises actual UI actions, then removes its fixtures. It temporarily changes one homepage portrait and the featured project, restores their original values, and asserts that homepage content, site settings and capabilities remain intact. Prefer a verification environment and do not run it concurrently with real CMS editing. Run against the production build for consistent browser verification.
 
 ## Deployment
 
-The repository root is the Vercel root. `vercel.json` runs `npm run build` and uses `frontend/.next`. Configure the URL and publishable key for the intended environment and apply migrations separately; the frontend build does not migrate the database. Deploy to a preview first. This redesign task has not published a frontend deployment or changed domain mappings.
+The repository root is the Vercel root. `vercel.json` runs `npm run build` and uses `frontend/.next`. Configure the URL and publishable key for the intended environment and apply migrations separately; the frontend build does not migrate the database. GitHub pushes follow the existing Vercel integration. Database migrations must be applied separately from frontend deployments.
 
 ## Repository
 

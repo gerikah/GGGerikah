@@ -1,0 +1,94 @@
+/* The five workflow steps stay in normal reading order at every width. */
+.od-public .flow-process {
+  padding: 0;
+  color: #111;
+}
+.flow-process .flow-process__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, .8fr);
+  align-items: end;
+  gap: 10px 40px;
+  margin: 0 0 28px;
+}
+.flow-process .flow-process__heading .flow-kicker {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.od-public .flow-process .flow-process__heading h2 {
+  margin: 0;
+  font: 600 clamp(30px, 3.4vw, 46px)/1.15 var(--font-mono);
+  letter-spacing: -.055em;
+}
+.flow-process .flow-process__heading > p:last-child {
+  max-width: 43ch;
+  margin: 0;
+  justify-self: end;
+  font: 400 15px/1.6 var(--font-sans);
+  color: #444;
+}
+.flow-process .flow-process__cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.flow-process .flow-process__cards li {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 24px 20px;
+  border: 1px solid #3a3a36;
+  border-radius: 4px;
+  background: #fffefa;
+}
+.flow-process .flow-process__number {
+  display: inline-grid;
+  align-self: flex-start;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: #f1e7ae;
+  color: #111;
+  font: 400 13px/1 var(--font-mono);
+}
+.od-public .flow-process .flow-process__cards h3 {
+  margin: 22px 0 10px;
+  font: 600 16px/1.35 var(--font-mono);
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+.flow-process .flow-process__cards p {
+  margin: 0;
+  color: #3d3d39;
+  font: 400 15px/1.6 var(--font-sans);
+}
+@media (max-width: 1099px) {
+  .flow-process .flow-process__cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .flow-process .flow-process__heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .flow-process .flow-process__heading > p:last-child { justify-self: start; }
+  .flow-process .flow-process__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .flow-process .flow-process__cards li { padding: 20px 18px; }
+}
+@media (max-width: 480px) {
+  .flow-process .flow-process__cards { grid-template-columns: 1fr; gap: 12px; }
+  .flow-process .flow-process__cards li {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: start;
+    gap: 6px 16px;
+    min-height: 142px;
+    padding: 20px;
+  }
+  .flow-process .flow-process__number { grid-row: 1 / span 2; }
+  .od-public .flow-process .flow-process__cards h3 { margin: 0; }
+}

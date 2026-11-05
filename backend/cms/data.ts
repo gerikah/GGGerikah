@@ -34,6 +34,20 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   })));
 });
 
+export const getHomepageProjects = cache(async (): Promise<Project[]> => {
+  const homepage = await getHomepage();
+  const selectedIds = [homepage.featured_project_id, homepage.secondary_one_id, homepage.secondary_two_id, homepage.secondary_three_id].filter((id): id is string => Boolean(id));
+  if (!selectedIds.length || !isSupabaseConfigured()) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").select("*").in("id", selectedIds).eq("is_published", true);
+  if (error) dataError("selected homepage projects", error.message);
+  const projects = await Promise.all(((data ?? []) as Project[]).map(async (project) => ({
+    ...project,
+    cover_image_url: await resolveMediaUrl(project.cover_image_url, supabase),
+  })));
+  return selectedIds.flatMap(id => projects.filter(project => project.id === id));
+});
+
 export const getProjectNavigation = cache(async (): Promise<Pick<Project, "title" | "slug">[]> => {
   if (!isSupabaseConfigured()) return [];
   const supabase = await createClient();
@@ -65,7 +79,7 @@ export const getProject = cache(async (slug: string): Promise<CaseStudy | null> 
 });
 
 export const getHomepage = cache(async (): Promise<HomepageContent> => {
-  const empty: HomepageContent = { id: 1, featured_project_id: null, secondary_one_id: null, secondary_two_id: null, editorial_one_path: "", editorial_one_alt: "", editorial_two_path: "", editorial_two_alt: "" };
+  const empty: HomepageContent = { id: 1, featured_project_id: null, secondary_one_id: null, secondary_two_id: null, secondary_three_id: null, editorial_one_path: "", editorial_one_alt: "", editorial_two_path: "", editorial_two_alt: "" };
   if (!isSupabaseConfigured()) return empty;
   const supabase = await createClient();
   const { data, error } = await supabase.from("homepage_content").select("*").eq("id", 1).single();

@@ -49,7 +49,9 @@ export const draftProjectSchema = projectSchema.extend({
 });
 
 export const capabilitySchema = z.object({
-  title: required("Title", 200), description: text(1000), kind: z.enum(["capability", "process"]),
+  title: required("Title", 200), description: text(1000), kind: z.enum(["capability", "process", "tool"]),
+  logo_key: z.enum(["", "figma", "javascript", "html5", "css3", "react", "nextjs", "typescript", "nodejs", "supabase", "postgresql", "git", "vercel"]),
+  proficiency_level: z.union([z.literal("").transform(() => null), z.coerce.number().int().min(1).max(5)]),
   sort_order: integer, is_published: z.boolean(),
 });
 

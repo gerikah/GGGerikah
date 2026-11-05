@@ -102,7 +102,7 @@ export async function saveCoverAlt(projectId: string, _state: ActionState, form:
 export async function saveCapability(id: string | null, _state: ActionState, form: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
   if (id && !uuid.safeParse(id).success) return { message: "This item could not be found." };
-  const parsed = capabilitySchema.safeParse({ ...formValues(form, ["title", "description", "kind", "sort_order"]), is_published: form.get("is_published") === "yes" });
+  const parsed = capabilitySchema.safeParse({ ...formValues(form, ["title", "description", "kind", "logo_key", "proficiency_level", "sort_order"]), is_published: form.get("is_published") === "yes" });
   if (!parsed.success) return invalid(parsed.error);
   const result = id ? await supabase.from("capabilities").update(parsed.data).eq("id", id).select("id").single() : await supabase.from("capabilities").insert(parsed.data).select("id").single();
   if (result.error) return failure(result.error.code);

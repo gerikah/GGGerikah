@@ -11,7 +11,11 @@ test("public portfolio remains responsive and CMS routes require authentication"
  for(const width of [1440,768,390]) {
   await page.setViewportSize({width,height:1000}); await page.goto("/");
   await expect(page.locator("#hero-title")).toBeVisible();
-  await expect(page.locator(".editorial-portrait")).toHaveCount(2);
+  const landing = page.locator(".landing-hero");
+  await expect(landing.getByRole("heading", { name: "GERIKAH", level: 1, exact: true })).toBeVisible();
+  const portrait = landing.getByRole("img", { name: "Portrait of Gerikah Alday", exact: true });
+  await expect(portrait).toBeVisible();
+  await expect.poll(() => portrait.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
  for(const route of ["/admin","/admin/media","/admin/projects/new","/admin/homepage"]) {await page.goto(route);await expect(page).toHaveURL(/\/login/);}

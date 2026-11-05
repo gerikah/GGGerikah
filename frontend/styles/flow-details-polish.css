@@ -1,0 +1,162 @@
+/* Content rhythm for introduction and capabilities; stage geometry lives in flow-journey.css. */
+.flow-journey[data-motion] .flow-details-polished .flow-bio {
+  margin-bottom: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-education {
+  margin-block: 20px;
+  padding: 20px 22px;
+  border-radius: 12px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-education h3 {
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-education__degree {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-education__school {
+  margin-top: 5px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-education__metadata {
+  margin-top: 8px;
+  color: #555;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-facts {
+  margin-block: 20px;
+  gap: 16px 24px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-facts dt {
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-facts dd,
+.flow-journey[data-motion] .flow-details-polished .flow-about__deliverable {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-about__deliverable { margin-block: 16px; }
+.flow-journey[data-motion] .flow-details-polished .flow-text-link {
+  min-height: 44px;
+  padding-block: 9px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.flow-journey[data-motion] .flow-about__credentials.flow-details-polished {
+  border-color: #1113;
+  border-radius: 12px;
+}
+.flow-journey[data-motion] .flow-about__credentials.flow-details-polished h3 {
+  margin-bottom: 20px;
+  font: 600 clamp(18px, 1.6vw, 22px)/1.35 var(--font-mono);
+  letter-spacing: -.04em;
+}
+.flow-journey[data-motion] .flow-about__credentials.flow-details-polished ul { gap: 2px; }
+.flow-journey[data-motion] .flow-about__credentials.flow-details-polished li {
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 14px;
+}
+.flow-journey[data-motion] .flow-about__credentials.flow-details-polished li p {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-heading > p:last-child {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-kicker { font-size: 12px; line-height: 1.5; }
+.flow-journey[data-motion] .flow-details-polished .flow-branch-description { font-size: 14px; line-height: 1.6; }
+.flow-journey[data-motion] .flow-details-polished .flow-branch-description strong {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-board {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  align-items: start;
+  gap: 28px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-groups {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px 24px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-group h3 {
+  margin-bottom: 12px;
+  font: 600 13px/1.5 var(--font-mono);
+  letter-spacing: -.03em;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-group ul {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tools-group li {
+  gap: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tool-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: #e5e4e0;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tool-icon img {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-tool-fallback {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: -.03em;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-github-history {
+  align-self: start;
+  min-height: 0;
+  height: auto;
+  gap: 22px;
+  padding: 24px;
+  border-radius: 12px;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-github-history h3 {
+  font: 600 clamp(20px, 2vw, 26px)/1.2 var(--font-mono);
+  letter-spacing: -.04em;
+}
+.flow-journey[data-motion] .flow-details-polished .flow-github-history p { font-size: 14px; line-height: 1.6; }
+.flow-journey[data-motion] .flow-details-polished .flow-github-history a {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+@media (max-width: 1099px) {
+  .flow-journey[data-motion] .flow-details-polished .flow-tools-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 24px;
+  }
+}
+@media (max-width: 699px) {
+  .flow-journey[data-motion] .flow-details-polished .flow-tools-board { gap: 28px; }
+  .flow-journey[data-motion] .flow-details-polished .flow-branch-descriptions { gap: 24px; }
+  .flow-journey[data-motion] .flow-details-polished .flow-education { padding: 18px; }
+  .flow-journey[data-motion] .flow-details-polished .flow-tools-groups { gap: 28px 18px; }
+  .flow-journey[data-motion] .flow-details-polished .flow-tools-group li { font-size: 14px; }
+  .flow-journey[data-motion] .flow-details-polished .flow-github-history { padding: 22px; }
+}

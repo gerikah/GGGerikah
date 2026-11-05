@@ -1,0 +1,84 @@
+/* Oversized name and suspended portrait from the supplied landing reference. */
+.landing-hero {
+  position: relative;
+  isolation: isolate;
+  height: calc(100svh - 8px);
+  min-height: 540px;
+  margin-top: -72px;
+  overflow: clip;
+  border-radius: 19px 19px 0 0;
+  background: linear-gradient(#fff9,#fff9), url('/images/textures/paper.jpg') center / cover no-repeat;
+  color: #000;
+}
+.od-public .landing-hero .landing-hero__name {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  z-index: 1;
+  width: max-content;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font: 700 clamp(80px, 18vw, 360px)/1 var(--font-mono);
+  letter-spacing: -.035em;
+  white-space: nowrap;
+}
+.landing-hero__lanyard {
+  position: absolute;
+  top: 0;
+  left: 64%;
+  width: 24%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(-3px 1px 3px #0003);
+}
+.landing-hero__lanyard--back { z-index: 0; fill: #d8d8d6; stroke: #c7c7c5; stroke-width: 1; }
+.landing-hero__lanyard--front { z-index: 2; fill: #eeefec; stroke: #ccc; stroke-width: 1; }
+.landing-hero__portrait {
+  position: absolute;
+  top: 57%;
+  left: 66%;
+  z-index: 3;
+  width: min(18vw, 28svh);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 28px);
+  background: #fff;
+  box-shadow: 0 4px 8px #0004, 0 1px 2px #0002;
+  transform: rotate(-14deg);
+}
+.landing-hero__portrait img { object-fit: cover; object-position: center; filter: grayscale(1); }
+.landing-hero__scroll {
+  position: absolute;
+  z-index: 4;
+  right: var(--gutter);
+  bottom: clamp(28px, 6vh, 72px);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 60px;
+}
+.landing-hero__scroll svg { width: 24px; height: 50px; stroke: currentColor; stroke-width: 2.5; }
+.landing-hero__scroll:hover svg { transform: translateY(4px); }
+.landing-hero__scroll svg { transition: transform .2s ease; }
+.landing-hero__scroll:focus-visible { outline: 2px solid #111; outline-offset: 4px; border-radius: 4px; }
+.od-public:has(.landing-hero) .nav-shell[data-scrolled=false] { background: transparent; }
+
+@media (max-width: 1099px) {
+  .landing-hero__portrait { top: 55%; left: 59%; width: min(28vw, 27svh); }
+  .landing-hero__lanyard { left: 56%; width: 32%; }
+}
+@media (max-width: 600px) {
+  .landing-hero { height: calc(100svh - 8px); margin-top: -64px; min-height: 580px; border-radius: 13px 13px 0 0; }
+  .od-public:has(.landing-hero) .nav-shell[data-scrolled=false] { background: #f6f5f2; }
+  .od-public .landing-hero .landing-hero__name { top: 40%; font-size: 18vw; }
+  .landing-hero__portrait { top: 53%; left: 45%; width: min(43vw, 28svh); }
+  .landing-hero__lanyard { left: 44%; width: 43%; }
+  .landing-hero__lanyard--back { transform: scaleY(.94); transform-origin: top; }
+  .landing-hero__lanyard--front { transform: scaleY(.94); transform-origin: top; }
+  .landing-hero__scroll { right: 16px; bottom: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero__scroll svg { transition: none; }
+  .landing-hero__scroll:hover svg { transform: none; }
+}

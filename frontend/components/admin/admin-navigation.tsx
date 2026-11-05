@@ -10,7 +10,7 @@ const groups = [
   { label: "Projects", icon: FolderIcon, links: [["All projects", "/admin/projects"], ["Add new project", "/admin/projects/new"], ["Drafts", "/admin/projects?status=draft"], ["Published projects", "/admin/projects?status=published"]] },
   { label: "Media Library", icon: ImageIcon, links: [["All images", "/admin/media"], ["Project covers", "/admin/media?category=cover"], ["Project galleries", "/admin/media?category=gallery"], ["Homepage images", "/admin/media?category=homepage"], ["Unassigned images", "/admin/media?category=unassigned"]] },
   { label: "Homepage", icon: HouseIcon, links: [["Homepage", "/admin/homepage"]] },
-  { label: "Site Content", icon: TextTIcon, links: [["Site details", "/admin/content"], ["Capabilities", "/admin/capabilities"], ["Workflow", "/admin/capabilities?kind=process"]] },
+  { label: "Site Content", icon: TextTIcon, links: [["Site details", "/admin/content"], ["Capabilities", "/admin/capabilities"], ["Tools and Technology", "/admin/capabilities?kind=tool"], ["Workflow", "/admin/capabilities?kind=process"]] },
   { label: "Settings", icon: GearIcon, links: [["Settings", "/admin/settings"]] },
 ];
 export function AdminNavigation({ email, children }: { email?: string; children: React.ReactNode }) {
