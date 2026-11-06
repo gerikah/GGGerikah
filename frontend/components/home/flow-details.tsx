@@ -84,16 +84,7 @@ export function DeveloperTools({ tools, githubUrl, id }: { tools: ToolDisplay[];
         .map(title => ({ title, tools: categories.get(title)! }));
 
     return (
-        <section id={id} className="flow-branch-copy flow-panel flow-panel--tools flow-details-polished" aria-labelledby="flow-tools-title">
-            <div className="flow-tools-heading">
-                <p className="flow-kicker">Capability / Tools and technology</p>
-                <h2 id="flow-tools-title">From flows to function.</h2>
-                <p>I bring interface design and development together so the experience stays clear from the first sketch to the working website.</p>
-            </div>
-            <div className="flow-branch-descriptions">
-                <p className="flow-branch-description flow-branch-description--design"><strong>UI/UX &amp; Flows</strong>Organizing information, mapping user journeys, and designing interfaces that make the next step clear.</p>
-                <p className="flow-branch-description flow-branch-description--build"><strong>Development</strong>Building responsive interfaces, reusable components, and the functionality behind the experience.</p>
-            </div>
+        <section id={id} className="flow-branch-copy" aria-label="Tools and technology">
             <div className="flow-tools-board">
                 <div className="flow-tools-groups">
                     {groups.map(group => (

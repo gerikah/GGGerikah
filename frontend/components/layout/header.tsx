@@ -17,7 +17,7 @@ export function Header() {
         const update = () => {
             frame = 0;
             let next = '';
-            for (const [id, key] of [['about', 'about'], ['development', 'about'], ['selected-work', 'work'], ['process', 'work']]) {
+            for (const [id, key] of [['about', 'about'], ['development', 'about'], ['selected-work', ''], ['process', '']]) {
                 const rect = document.getElementById(id)?.getBoundingClientRect();
                 if (rect && rect.top < innerHeight * .4)
                     next = key;

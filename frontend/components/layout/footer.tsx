@@ -14,8 +14,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
     return (
         <footer className="editorial-footer">
-            <section className="site-footer" id="contact" aria-labelledby="contact-title">
+            <section className="site-footer" id="contact" data-flow-stage="contact" aria-labelledby="contact-title">
                 <div className="site-footer__inner">
+                    <div className="footer-flow-entry"><a href={email ? 'mailto:' + email : '#contact-title'} className="flow-node flow-node--pill" data-flow-node="talk">{c.contact.title}</a></div>
                     <div className="site-footer__main">
                         <div className="site-footer__copy">
                             <p className="site-footer__eyebrow">
