@@ -114,8 +114,8 @@ html:has(.flow-journey) { scroll-padding-top: 0; }
 .footer-flow-entry { display: none; }
 .od-public:has(.flow-journey) .site-footer__inner { display: grid; grid-template-columns: clamp(190px,23vw,280px) minmax(0,1fr); gap: 32px clamp(36px,5vw,76px); }
 .od-public:has(.flow-journey) .footer-flow-entry { display: block; }
-.od-public:has(.flow-journey) .site-footer__main { display: block; padding-bottom: 0; }
-.od-public:has(.flow-journey) .site-footer__actions { margin-top: 24px; }
+.od-public:has(.flow-journey) .site-footer__main { grid-column: 1/-1; display: grid; padding-bottom: 0; }
+.od-public:has(.flow-journey) .site-footer__actions { margin-top: 0; }
 .od-public:has(.flow-journey) .site-footer__bottom { grid-column: 1/-1; }
 .od-public:has(.flow-journey) #contact.site-footer { padding-top: 0; scroll-margin-top: calc(var(--journey-header,72px) + 24px); }
 @media (min-width: 1100px) {
@@ -165,7 +165,8 @@ html:has(.flow-journey) { scroll-padding-top: 0; }
   .flow-journey .flow-process .flow-process__cards { grid-template-columns: 1fr; }
   .flow-journey .flow-process .flow-process__cards li { padding: 18px 14px; }
   .od-public:has(.flow-journey) .site-footer__inner { grid-template-columns: 24px minmax(0,1fr); gap: 24px 12px; }
-  .od-public:has(.flow-journey) :is(.footer-flow-entry,.site-footer__main,.site-footer__bottom) { grid-column: 2; }
+  .od-public:has(.flow-journey) .footer-flow-entry { grid-column: 2; }
+  .od-public:has(.flow-journey) :is(.site-footer__main,.site-footer__bottom) { grid-column: 1/-1; }
   .od-public:has(.flow-journey) .site-footer__copy h2 { font-size: clamp(34px,8vw,48px); }
 }
 @media (max-width:479px) {
@@ -181,6 +182,4 @@ html:has(.flow-journey) { scroll-padding-top: 0; }
 @media (prefers-reduced-motion:reduce) { .flow-mobile-cue span { animation: none; } .flow-node,.flow-project-card { transition: none; } }
 @keyframes flow-cue { 50% { transform: translateY(4px); } }
 
-/* Keep the texture quiet behind the longer reading sections. */
-.od-public:has(.flow-journey) { background-image: linear-gradient(#f6f5f2f5,#f6f5f2f5),url('/images/textures/paper.jpg'); }
 @media(max-width:600px){.od-public:has(.flow-journey){--gutter:16px}.od-public .nav__link{font-size:12px}}

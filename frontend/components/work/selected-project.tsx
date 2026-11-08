@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Project } from "@api/contracts/cms";
 import { MediaFrame } from "@frontend/components/media/media-frame";
 import { MEDIA_SIZES } from "@frontend/components/media/media-spec";
+import "@frontend/styles/work-gallery.css";
 
 export function SelectedProject({ project, slot }: { project?: Project; slot?: number }) {
   const sizes = slot === 1 ? MEDIA_SIZES.full : MEDIA_SIZES.half;
@@ -9,5 +10,6 @@ export function SelectedProject({ project, slot }: { project?: Project; slot?: n
   return <Link className="selected-project" href={`/work/${project.slug}`}>
     <MediaFrame className="project-image" src={project.cover_image_url} alt={project.cover_alt} sizes={sizes} />
     <div className="project-caption"><h3>{project.title}</h3><span>Explore ↗</span></div>
+    {project.short_description && <p className="project-summary">{project.short_description}</p>}
   </Link>;
 }

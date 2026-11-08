@@ -9,6 +9,7 @@ import "@fontsource/poppins/latin-600.css";
 import "@fontsource/poppins/latin-700.css";
 import "@frontend/styles/globals.css";
 import "@frontend/styles/media.css";
+import "@frontend/styles/editorial.css";
 
 export const metadata: Metadata = {
   title: { default: "Gerikah — Design & Development", template: "%s — Gerikah" },

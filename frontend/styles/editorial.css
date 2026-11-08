@@ -215,7 +215,6 @@
 
 /* Keep texture underneath copy and controls; no screen-wide filter or fixed overlay. */
 .hero-tagline-artwork,.nav__logo{filter:grayscale(1)}
-@media(max-width:600px){:root{--texture-size:552px 860.25px}}
 
 /* Shared navigation and contact refinements. */
 .od-public a:focus-visible,.od-public button:focus-visible,.od-public summary:focus-visible{outline:2px solid #fff;outline-offset:5px}
@@ -247,8 +246,6 @@
 .case-pagination{border-top:1px solid #ffffff20}
 .case-next strong{font-family:var(--font-display);font-weight:500;letter-spacing:-.045em}
 .page-transition{transform-origin:top center}
-@media(prefers-reduced-motion:no-preference){.page-transition{animation:page-enter .32s cubic-bezier(.22,1,.36,1) both}}
-@keyframes page-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 [data-reveal][data-entering=true]{animation-duration:.55s}
 @media(max-width:600px){
   .work-archive{padding-block:52px 72px}
@@ -267,8 +264,8 @@
 .od-public{
   --bg:#f6f5f2;--ink:#111;--muted:#555;--surface:#fff;--surface-raised:#dededc;--line:#222;
   color-scheme:light;color:var(--ink);background-color:#f6f5f2;
-  background-image:linear-gradient(#f6f5f2e6,#f6f5f2e6),url('/images/textures/paper.jpg');
-  background-size:auto,cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed,fixed;
+  background-image:var(--paper-surface);
+  background-size:auto,var(--texture-size);background-position:center top;background-repeat:no-repeat;background-attachment:scroll;
 }
 .od-public a:hover{color:#333}
 .od-public .nav-shell,.od-public .nav-shell[data-scrolled=true]{background:#f6f5f2e8;border-color:#1112}
@@ -306,7 +303,6 @@
 .od-public{
   position:relative;min-height:calc(100svh - 8px);margin:4px;
   border:1px solid #111;border-radius:20px;
-  background-image:linear-gradient(#f6f5f2d9,#f6f5f2d9),url('/images/textures/paper.jpg');
 }
 .od-public .wrap{width:90.5%;max-width:none}
 .od-public .nav-shell,.od-public .nav-shell[data-scrolled=true]{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
@@ -410,7 +406,7 @@
 }
 
 /* Keep a stable, protected header and shared content edges during the pinned flow. */
-.od-public { --gutter: clamp(20px,4.2vw,64px); background-image:linear-gradient(#f6f5f2ed,#f6f5f2ed),url('/images/textures/paper.jpg'); }
+.od-public { --gutter: clamp(20px,4.2vw,64px); }
 .od-public .nav-shell,.od-public .nav-shell[data-scrolled=true] { background:#f6f5f2; border-color:transparent; border-radius:18px 18px 0 0; }
 .od-public header.nav { width:calc(100% - var(--gutter) * 2); }
 .od-public .nav,.od-public .nav[data-scrolled=true] { min-height:72px; }

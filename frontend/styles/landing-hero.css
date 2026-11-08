@@ -7,7 +7,7 @@
   margin-top: -72px;
   overflow: clip;
   border-radius: 19px 19px 0 0;
-  background: linear-gradient(#fff9,#fff9), url('/images/textures/paper.jpg') center / cover no-repeat;
+  background: linear-gradient(#fff9,#fff9), var(--texture-image) center / cover no-repeat;
   color: #000;
 }
 .od-public .landing-hero .landing-hero__name {

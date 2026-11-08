@@ -1,4 +1,5 @@
 /* Contact remains a compact continuation of the workflow. */
+.footer-flow-entry { display: none; }
 .od-public .editorial-footer .site-footer {
   scroll-margin-top: 104px;
   padding: clamp(36px, 4vw, 56px) 0 24px;
