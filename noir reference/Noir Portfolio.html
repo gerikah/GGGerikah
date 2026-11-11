@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kai Moreno — Systems Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: oklch(0.13 0.004 260);
+  --bg2: oklch(0.16 0.005 260);
+  --line: oklch(0.28 0.006 260);
+  --dim: oklch(0.55 0.008 260);
+  --fg: oklch(0.93 0.006 80);
+  --amber: oklch(0.80 0.15 70);
+  --red: oklch(0.64 0.21 25);
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --disp: 'Archivo', sans-serif;
+  --pad: clamp(20px, 4vw, 64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--amber);color:var(--bg)}
+
+/* ---------- atmosphere ---------- */
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:90;opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+.scan{position:fixed;inset:0;pointer-events:none;z-index:89;
+  background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.18) 2px 3px)}
+.torch{position:fixed;inset:0;pointer-events:none;z-index:88;
+  background:radial-gradient(520px circle at var(--mx,50%) var(--my,40%),transparent 0,rgba(0,0,0,.42) 70%);
+  transition:background .05s}
+
+/* ---------- top bar ---------- */
+.bar{position:fixed;top:0;left:0;right:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:14px var(--pad);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  background:linear-gradient(to bottom,rgba(10,10,12,.92),rgba(10,10,12,0));}
+.bar .id{display:flex;gap:14px;align-items:center}
+.bar .id b{font-family:var(--disp);font-weight:800;font-stretch:70%;font-size:18px;letter-spacing:.02em}
+.bar nav{display:flex;gap:28px}
+.bar nav a{color:var(--dim);transition:color .2s}
+.bar nav a span{color:var(--amber);margin-right:6px}
+.bar nav a:hover{color:var(--fg)}
+.bar .stat{justify-self:end;display:flex;gap:22px;color:var(--dim)}
+.live{display:inline-flex;align-items:center;gap:8px;color:var(--fg)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100vh;padding:120px var(--pad) 40px;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;border-bottom:1px solid var(--line)}
+#rain{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.55}
+.hero > *:not(canvas){position:relative;z-index:1}
+.hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-top:1px solid var(--line);padding-top:14px}
+.hero-meta b{display:block;color:var(--fg);font-weight:400;margin-top:4px}
+.hero-mid{display:grid;grid-template-columns:1.35fr 1fr;gap:var(--pad);align-items:end;padding:40px 0}
+.name{font-family:var(--disp);font-weight:850;font-stretch:62%;text-transform:uppercase;line-height:.82;font-size:clamp(96px,17vw,280px);letter-spacing:-.01em}
+.name .l2{display:block;color:transparent;-webkit-text-stroke:1px var(--fg);}
+.name .l2 em{font-style:normal;color:var(--amber);-webkit-text-stroke:0}
+.tag{margin-top:28px;max-width:46ch;font-size:15px;color:var(--fg);text-wrap:pretty}
+.tag span{color:var(--dim)}
+
+.term{background:rgba(14,14,17,.82);border:1px solid var(--line);backdrop-filter:blur(6px);font-size:12.5px;align-self:end}
+.term-h{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.term-h i{display:inline-block;width:8px;height:8px;border:1px solid var(--dim);margin-right:5px}
+.term-b{height:250px;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.term-b p{white-space:pre-wrap;color:var(--dim)}
+.term-b p.o{color:var(--fg)}
+.term-b p.a{color:var(--amber)}
+.term-b .cmd{color:var(--fg)}
+.term-in{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+.term-in span{color:var(--amber)}
+.term-in input{flex:1;background:none;border:0;outline:0;color:var(--fg);font:inherit;caret-color:var(--amber)}
+.hero-foot{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.hero-foot .down{display:flex;gap:10px;align-items:center}
+.hero-foot .down::after{content:"";width:1px;height:28px;background:linear-gradient(var(--amber),transparent);animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---------- marquee ---------- */
+.marq{border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:16px 0;font-family:var(--disp);font-stretch:70%;font-weight:600;text-transform:uppercase;font-size:22px;letter-spacing:.04em;color:var(--dim)}
+.marq div{display:inline-block;animation:marq 40s linear infinite}
+.marq span{margin:0 26px}
+.marq b{color:var(--amber);font-weight:600}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section.s{padding:120px var(--pad);border-bottom:1px solid var(--line)}
+.s-h{display:grid;grid-template-columns:200px 1fr auto;gap:24px;align-items:end;margin-bottom:64px}
+.s-h .no{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.s-h h2{font-family:var(--disp);font-weight:800;font-stretch:65%;text-transform:uppercase;font-size:clamp(56px,8vw,128px);line-height:.85}
+.s-h .note{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:right;max-width:28ch}
+
+/* case files */
+.files{border-top:1px solid var(--line)}
+.file{border-bottom:1px solid var(--line)}
+.file-row{display:grid;grid-template-columns:200px 1fr 220px 120px 40px;gap:24px;align-items:center;padding:28px 0;cursor:pointer;position:relative}
+.file-row::before{content:"";position:absolute;inset:0 calc(-1 * var(--pad));background:var(--bg2);opacity:0;transition:opacity .25s;z-index:-1}
+.file-row:hover::before,.file.open .file-row::before{opacity:1}
+.file-row .fn{font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.file-row .fn b{color:var(--amber);font-weight:400}
+.file-row h3{font-family:var(--disp);font-weight:700;font-stretch:72%;text-transform:uppercase;font-size:clamp(30px,3.6vw,54px);line-height:1;transition:transform .35s cubic-bezier(.2,.8,.2,1),color .2s}
+.file-row:hover h3{transform:translateX(14px);color:var(--amber)}
+.file-row .cat,.file-row .yr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.file-row .tg{justify-self:end;width:22px;height:22px;position:relative}
+.file-row .tg::before,.file-row .tg::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--fg);transition:transform .3s}
+.file-row .tg::after{transform:rotate(90deg)}
+.file.open .tg::after{transform:rotate(0)}
+.file-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.8,.2,1)}
+.file.open .file-body{grid-template-rows:1fr}
+.file-body > div{overflow:hidden}
+.file-inner{display:grid;grid-template-columns:200px 1.4fr 1fr;gap:24px;padding:8px 0 48px}
+.ph{aspect-ratio:16/9;border:1px solid var(--line);position:relative;display:flex;align-items:flex-end;padding:12px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+  background:repeating-linear-gradient(135deg,transparent 0 9px,oklch(0.2 0.005 260) 9px 10px),var(--bg)}
+.ph::before{content:"";position:absolute;top:10px;left:10px;width:14px;height:14px;border-left:1px solid var(--amber);border-top:1px solid var(--amber)}
+.ph::after{content:"";position:absolute;bottom:10px;right:10px;width:14px;height:14px;border-right:1px solid var(--amber);border-bottom:1px solid var(--amber)}
+.brief dl{display:grid;grid-template-columns:90px 1fr;gap:10px 16px;font-size:13px}
+.brief dt{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding-top:2px}
+.brief dd{text-wrap:pretty}
+.metric{margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+.metric b{font-family:var(--disp);font-stretch:65%;font-weight:800;font-size:64px;line-height:1;color:var(--amber);display:block}
+.metric span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+.chips span{font-size:10.5px;letter-spacing:.06em;border:1px solid var(--line);padding:3px 8px;color:var(--dim)}
+.links{margin-top:20px;display:flex;gap:20px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.links a{border-bottom:1px solid var(--amber);padding-bottom:2px}
+
+/* stack */
+.stack{display:grid;grid-template-columns:200px repeat(4,1fr);gap:0 24px}
+.stack .lede{grid-row:span 2;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.col{border-top:1px solid var(--line);padding-top:18px}
+.col h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:400;margin-bottom:18px;display:flex;justify-content:space-between}
+.col h4 span{color:var(--dim)}
+.col ul{list-style:none}
+.col li{font-family:var(--disp);font-stretch:75%;font-weight:500;font-size:26px;line-height:1.35;text-transform:uppercase;transition:color .2s,padding .3s;cursor:default}
+.col li:hover{color:var(--amber);padding-left:8px}
+.col li small{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em;margin-left:8px;vertical-align:middle}
+
+/* log */
+.log{border-top:1px solid var(--line)}
+.entry{display:grid;grid-template-columns:200px 1fr 1.2fr 140px;gap:24px;padding:30px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.entry .when{font-size:12px;color:var(--dim)}
+.entry .when b{color:var(--fg);font-weight:400}
+.entry .role{font-family:var(--disp);font-stretch:72%;font-weight:700;font-size:32px;text-transform:uppercase;line-height:1}
+.entry .role small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.1em;color:var(--amber);margin-top:8px}
+.entry p{color:var(--dim);text-wrap:pretty}
+.entry p b{color:var(--fg);font-weight:400}
+.entry .loc{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:right}
+.entry.now .when::before{content:"● ";color:var(--red)}
+
+/* contact */
+.contact{padding:140px var(--pad) 60px;position:relative;overflow:hidden}
+.contact .pre{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:28px}
+.contact h2{font-family:var(--disp);font-weight:850;font-stretch:62%;text-transform:uppercase;font-size:clamp(72px,12vw,200px);line-height:.84}
+.contact h2 .o{color:transparent;-webkit-text-stroke:1px var(--fg)}
+.mail{display:inline-flex;align-items:center;gap:18px;margin-top:56px;font-size:clamp(20px,2.4vw,34px);border-bottom:1px solid var(--line);padding-bottom:10px;transition:border-color .3s,color .3s}
+.mail:hover{border-color:var(--amber);color:var(--amber)}
+.mail .arr{display:inline-block;transition:transform .3s}
+.mail:hover .arr{transform:translate(6px,-6px)}
+.copied{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-left:16px;opacity:0;transition:opacity .3s}
+.copied.on{opacity:1}
+.c-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:120px;border-top:1px solid var(--line);padding-top:18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.c-grid a{display:block;color:var(--fg);margin-top:6px;transition:color .2s}
+.c-grid a:hover{color:var(--amber)}
+footer{display:flex;justify-content:space-between;padding:20px var(--pad);border-top:1px solid var(--line);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:980px){
+  .bar nav{display:none}.bar{grid-template-columns:1fr 1fr}
+  .hero-mid,.file-inner,.stack,.entry,.s-h{grid-template-columns:1fr}
+  .hero-meta,.c-grid{grid-template-columns:1fr 1fr}
+  .file-row{grid-template-columns:70px 1fr 30px}.file-row .cat,.file-row .yr{display:none}
+  .stack .lede{grid-row:auto;margin-bottom:24px}.col{margin-bottom:32px}
+  .s-h .note,.entry .loc{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div><div class="scan"></div><div class="torch" id="torch"></div>
+
+<header class="bar">
+  <div class="id"><b>KM</b><span style="color:var(--dim)">/ sys.eng</span></div>
+  <nav>
+    <a href="#work"><span>01</span>Case Files</a>
+    <a href="#stack"><span>02</span>Stack</a>
+    <a href="#log"><span>03</span>Log</a>
+    <a href="#contact"><span>04</span>Contact</a>
+  </nav>
+  <div class="stat"><span id="clock">--:--:--</span><span class="live"><i></i>Open to work</span></div>
+</header>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="Hero">
+  <canvas id="rain"></canvas>
+  <div class="hero-meta">
+    <div>Based in<b>Brooklyn, NY</b></div>
+    <div>Coordinates<b>40.6782° N, 73.9442° W</b></div>
+    <div>Currently<b>Staff Eng — Infra</b></div>
+    <div>Discipline<b>Computer Engineering</b></div>
+  </div>
+  <div class="hero-mid">
+    <div>
+      <h1 class="name"><span class="l1" data-scramble>Kai</span><span class="l2"><span data-scramble>Moreno</span><em>.</em></span></h1>
+      <p class="tag">Systems engineer working where software meets silicon. I build fast, quiet infrastructure — <span>compilers, distributed runtimes, firmware</span> — that keeps running long after everyone's gone home.</p>
+    </div>
+    <div class="term" id="term">
+      <div class="term-h"><span><i></i><i></i><i></i></span><span>km@noir: ~</span><span>tty1</span></div>
+      <div class="term-b" id="termOut"></div>
+      <label class="term-in"><span>›</span><input id="termIn" autocomplete="off" spellcheck="false" placeholder="type 'help'"></label>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <span>Portfolio — Vol. 07 / 2026</span>
+    <a href="#work" class="down">Open the files</a>
+    <span>Signal: Stable</span>
+  </div>
+</section>
+
+<div class="marq"><div id="marqIn"></div></div>
+
+<!-- WORK -->
+<section class="s" id="work" data-screen-label="01 Case Files">
+  <div class="s-h rv">
+    <div class="no">01 — Case Files</div>
+    <h2>Selected<br>Work</h2>
+    <div class="note">Four investigations, 2021 – 2026. Click a file to open it.</div>
+  </div>
+  <div class="files" id="files"></div>
+</section>
+
+<!-- STACK -->
+<section class="s" id="stack" data-screen-label="02 Stack">
+  <div class="s-h rv">
+    <div class="no">02 — Toolkit</div>
+    <h2>The<br>Stack</h2>
+    <div class="note">Tools I reach for first. Years in parentheses.</div>
+  </div>
+  <div class="stack rv">
+    <div class="lede">Low-level by training,<br>full-stack by necessity.</div>
+    <div class="col"><h4>Languages <span>/A</span></h4><ul>
+      <li>Rust<small>06</small></li><li>C / C++<small>10</small></li><li>Go<small>05</small></li><li>TypeScript<small>07</small></li><li>Python<small>09</small></li></ul></div>
+    <div class="col"><h4>Systems <span>/B</span></h4><ul>
+      <li>Linux Kernel</li><li>LLVM</li><li>eBPF</li><li>Raft / Paxos</li><li>WebAssembly</li></ul></div>
+    <div class="col"><h4>Infra <span>/C</span></h4><ul>
+      <li>Kubernetes</li><li>Terraform</li><li>Postgres</li><li>Kafka</li><li>Grafana</li></ul></div>
+    <div class="col"><h4>Hardware <span>/D</span></h4><ul>
+      <li>Verilog</li><li>FPGA</li><li>ARM Cortex-M</li><li>RISC-V</li><li>KiCad</li></ul></div>
+  </div>
+</section>
+
+<!-- LOG -->
+<section class="s" id="log" data-screen-label="03 Log">
+  <div class="s-h rv">
+    <div class="no">03 — Service Record</div>
+    <h2>The<br>Log</h2>
+    <div class="note">Full CV on request.</div>
+  </div>
+  <div class="log">
+    <div class="entry now rv"><div class="when"><b>2023.04</b> → now</div><div class="role">Staff Engineer<small>@ Halcyon Compute</small></div><p>Lead for the <b>scheduler and runtime team</b>. Own the job placement engine across 14 regions; mentor six engineers.</p><div class="loc">New York</div></div>
+    <div class="entry rv"><div class="when"><b>2020.08</b> → 2023.03</div><div class="role">Senior Engineer<small>@ Vantablack Systems</small></div><p>Built the <b>storage engine</b> behind a time-series database; cut write amplification by 3× with a custom LSM compaction strategy.</p><div class="loc">Remote</div></div>
+    <div class="entry rv"><div class="when"><b>2018.06</b> → 2020.07</div><div class="role">Firmware Engineer<small>@ Ferro Robotics</small></div><p>Wrote <b>real-time motor control firmware</b> on Cortex-M4 and FPGA co-processors for warehouse robots.</p><div class="loc">Pittsburgh</div></div>
+    <div class="entry rv"><div class="when"><b>2014</b> → 2018</div><div class="role">B.S. Computer Eng.<small>@ Carnegie Mellon</small></div><p>Thesis on <b>hardware-accelerated packet filtering</b>. TA for Computer Architecture (18-447).</p><div class="loc">Pittsburgh</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact" data-screen-label="04 Contact">
+  <div class="pre rv">04 — Contact</div>
+  <h2 class="rv">Leave a<br><span class="o">message</span><br>after the tone.</h2>
+  <a class="mail rv" href="#" id="mail">kai@moreno.dev <span class="arr">↗</span></a><span class="copied" id="copied">Copied to clipboard</span>
+  <div class="c-grid rv">
+    <div>Code<a href="#">GitHub ↗</a></div>
+    <div>Network<a href="#">LinkedIn ↗</a></div>
+    <div>Writing<a href="#">Blog / RSS ↗</a></div>
+    <div>Signal<a href="#">PGP Key ↗</a></div>
+  </div>
+</section>
+<footer><span>© 2026 Kai Moreno</span><span>Built by hand. No trackers.</span><span id="clock2"></span></footer>
+
+<script>
+/* ---------- data ---------- */
+const FILES = [
+  {n:'001', t:'Nightshift Scheduler', c:'Distributed Systems', y:'2025', ph:'Scheduler dashboard / topology view',
+   prob:'Batch jobs across 14 regions were placed greedily, stranding capacity and missing SLAs overnight.',
+   work:'Designed a bin-packing scheduler in Rust with a Raft-backed state store and pre-emption tiers.',
+   m:'38%', ml:'Fleet cost reduction', s:['Rust','Raft','gRPC','Kubernetes']},
+  {n:'002', t:'Obsidian TSDB', c:'Storage Engine', y:'2022', ph:'Compaction benchmark / write path diagram',
+   prob:'Write amplification was eating SSD lifespan and spiking p99 latency during compaction.',
+   work:'Rewrote the LSM compaction policy with tiered, time-partitioned merges and a lock-free memtable.',
+   m:'3×', ml:'Less write amplification', s:['C++','LSM','io_uring','Go']},
+  {n:'003', t:'Ghostline Firmware', c:'Embedded / FPGA', y:'2019', ph:'Robot drive unit / scope capture',
+   prob:'Warehouse robots jittered under load because the motor loop shared a core with networking.',
+   work:'Moved FOC motor control to an FPGA co-processor; wrote the Cortex-M4 firmware bridge in C.',
+   m:'20 kHz', ml:'Deterministic control loop', s:['C','Verilog','FreeRTOS','KiCad']},
+  {n:'004', t:'Lantern', c:'Open Source / Compiler', y:'2024', ph:'Lantern CLI / trace output',
+   prob:'eBPF programs were painful to write and impossible to debug in production.',
+   work:'A small typed language that compiles to eBPF via LLVM, with source-mapped live tracing.',
+   m:'4.2k', ml:'GitHub stars', s:['LLVM','eBPF','Rust','WASM playground']},
+];
+
+/* ---------- case files ---------- */
+const filesEl = document.getElementById('files');
+filesEl.innerHTML = FILES.map((f,i)=>`
+<div class="file rv${i===0?' open':''}">
+  <div class="file-row">
+    <div class="fn">FILE <b>№${f.n}</b></div>
+    <h3>${f.t}</h3>
+    <div class="cat">${f.c}</div>
+    <div class="yr">${f.y}</div>
+    <div class="tg"></div>
+  </div>
+  <div class="file-body"><div><div class="file-inner">
+    <div></div>
+    <div class="ph">[ ${f.ph} ]</div>
+    <div class="brief">
+      <dl><dt>Problem</dt><dd>${f.prob}</dd><dt>Work</dt><dd>${f.work}</dd></dl>
+      <div class="metric"><b>${f.m}</b><span>${f.ml}</span></div>
+      <div class="chips">${f.s.map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="links"><a href="#">Case study</a><a href="#">Source</a></div>
+    </div>
+  </div></div></div>
+</div>`).join('');
+filesEl.querySelectorAll('.file-row').forEach(r=>r.addEventListener('click',()=>r.parentElement.classList.toggle('open')));
+
+/* ---------- marquee ---------- */
+const words=['Rust','<b>/</b>','Distributed Systems','<b>/</b>','Compilers','<b>/</b>','Firmware','<b>/</b>','FPGA','<b>/</b>','Kernel','<b>/</b>','Observability','<b>/</b>','Low Latency','<b>/</b>'];
+const half=words.map(w=>`<span>${w}</span>`).join('');
+document.getElementById('marqIn').innerHTML=half+half+half+half;
+
+/* ---------- clock ---------- */
+function tick(){const d=new Date();const t=d.toLocaleTimeString('en-US',{hour12:false,timeZone:'America/New_York'});
+  document.getElementById('clock').textContent='NYC '+t;document.getElementById('clock2').textContent='Local '+t;}
+tick();setInterval(tick,1000);
+
+/* ---------- torch ---------- */
+const torch=document.getElementById('torch');
+addEventListener('pointermove',e=>{torch.style.setProperty('--mx',e.clientX+'px');torch.style.setProperty('--my',e.clientY+'px')});
+
+/* ---------- scramble ---------- */
+const glyphs='▓▒░<>/\\_#01ΣΔ';
+document.querySelectorAll('[data-scramble]').forEach((el,k)=>{
+  const final=el.textContent;let f=0;const total=final.length*4+10;
+  const iv=setInterval(()=>{f++;el.textContent=final.split('').map((c,i)=>f>i*4+k*6?c:glyphs[Math.random()*glyphs.length|0]).join('');
+    if(f>total+k*6){clearInterval(iv);el.textContent=final}},38);
+});
+
+/* ---------- rain ---------- */
+const cv=document.getElementById('rain'),cx=cv.getContext('2d');let drops=[];
+function size(){const r=cv.getBoundingClientRect();cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;
+  drops=Array.from({length:Math.floor(r.width/6)},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,l:8+Math.random()*28,v:6+Math.random()*12,a:.05+Math.random()*.25}));}
+size();addEventListener('resize',size);
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);cx.lineWidth=devicePixelRatio;
+  for(const d of drops){cx.strokeStyle=`rgba(225,225,235,${d.a})`;cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-d.l*.12,d.y+d.l*devicePixelRatio);cx.stroke();
+    d.y+=d.v*devicePixelRatio;d.x-=d.v*.12;if(d.y>cv.height){d.y=-40;d.x=Math.random()*cv.width*1.1}}
+  requestAnimationFrame(loop)})();
+
+/* ---------- terminal ---------- */
+const out=document.getElementById('termOut'),inp=document.getElementById('termIn');
+const CMDS={
+  help:()=>['available: whoami  projects  stack  contact  status  clear'],
+  whoami:()=>['Kai Moreno — systems engineer.','B.S. Computer Engineering, CMU \'18.','Eight years shipping infra, firmware & compilers.'],
+  projects:()=>FILES.map(f=>`  №${f.n}  ${f.t.padEnd(22)} ${f.y}`).concat(['→ scrolling to case files…']),
+  stack:()=>['rust  c/c++  go  ts  python','llvm  ebpf  kernel  raft','k8s  terraform  postgres  kafka','verilog  fpga  cortex-m  risc-v'],
+  contact:()=>['kai@moreno.dev','→ scrolling to contact…'],
+  status:()=>['uptime: 8y 4m   load: 0.42   status: OPEN TO WORK'],
+  sudo:()=>['nice try.'],
+};
+function print(txt,cls=''){const p=document.createElement('p');p.className=cls;p.textContent=txt;out.appendChild(p);out.scrollTop=out.scrollHeight;}
+function run(c){
+  const p=document.createElement('p');p.innerHTML='<span style="color:var(--amber)">› </span><span class="cmd"></span>';p.querySelector('.cmd').textContent=c;out.appendChild(p);
+  const k=c.trim().toLowerCase().split(' ')[0];
+  if(!k)return;
+  if(k==='clear'){out.innerHTML='';return}
+  if(CMDS[k]){CMDS[k]().forEach(l=>print(l,'o'));
+    if(k==='projects')setTimeout(()=>scrollTo({top:document.getElementById('work').offsetTop-40,behavior:'smooth'}),700);
+    if(k==='contact')setTimeout(()=>scrollTo({top:document.getElementById('contact').offsetTop,behavior:'smooth'}),700);
+  } else print(`command not found: ${k}. try 'help'`);
+  out.scrollTop=out.scrollHeight;
+}
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'){run(inp.value);inp.value=''}});
+// boot sequence
+const boot=['[ ok ] mounting /dev/portfolio','[ ok ] loading case files (4)','[ ok ] establishing secure line','',"welcome. type 'help' to look around."];
+boot.forEach((l,i)=>setTimeout(()=>print(l,i===4?'a':''),300+i*260));
+
+/* ---------- email copy ---------- */
+document.getElementById('mail').addEventListener('click',e=>{e.preventDefault();navigator.clipboard?.writeText('kai@moreno.dev').catch(()=>{});
+  const c=document.getElementById('copied');c.classList.add('on');setTimeout(()=>c.classList.remove('on'),1800)});
+
+/* ---------- reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

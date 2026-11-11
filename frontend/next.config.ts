@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
-import path from "node:path";
 
-const repositoryRoot = path.resolve(__dirname, "..");
+// Next can load this config as ESM when the native compiler is unavailable.
+// process.cwd() stays valid in both ESM and CommonJS execution modes.
+const repositoryRoot = process.cwd();
 
 const storageHost = process.env.SUPABASE_URL
   ? new URL(process.env.SUPABASE_URL).hostname

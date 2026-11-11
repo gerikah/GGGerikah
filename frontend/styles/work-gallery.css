@@ -6,3 +6,32 @@
   font: 400 15px/1.65 var(--font-sans);
   overflow-wrap: anywhere;
 }
+
+/* The work archive takes the reference's case-file index: one reading lane, one preview lane. */
+.od-public .work-archive--ledger { padding-top: clamp(28px, 4vw, 54px); }
+.od-public .work-archive--ledger .work-archive__header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .8fr); gap: 40px; align-items: end; }
+.od-public .work-archive--ledger .work-archive__intro { max-width: 35ch; margin: 0; color: #4d4b45; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; }
+.od-public .work-archive--ledger h1 { justify-self: end; width: min-content; max-width: 7ch; border: 0; padding: 0; font-size: clamp(62px, 9vw, 128px); line-height: .82; }
+.od-public .work-archive--ledger .archive-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; width: min(100%, 1100px); margin-left: auto; }
+.od-public .work-archive--ledger .selected-project { display: grid; grid-template-columns: minmax(130px, .58fr) minmax(260px, 1fr) minmax(220px, .8fr); column-gap: clamp(20px, 4vw, 64px); align-items: center; min-height: 170px; padding: 24px 0; border-top: 1px solid #1113; }
+.od-public .work-archive--ledger .selected-project:last-child { border-bottom: 1px solid #1113; }
+.od-public .work-archive--ledger .selected-project .media-frame { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 3; overflow: hidden; background: #deddd9; }
+.od-public .work-archive--ledger .selected-project .project-caption { grid-column: 2; grid-row: 1; display: block; padding: 0; }
+.od-public .work-archive--ledger .selected-project .project-caption h3 { font-size: clamp(23px, 2.7vw, 42px); font-weight: 500; line-height: 1; letter-spacing: -.06em; }
+.od-public .work-archive--ledger .selected-project .project-caption span { display: block; margin-top: 12px; color: #5e5b55; font-size: 13px; }
+.od-public .work-archive--ledger .selected-project .project-summary { grid-column: 3; grid-row: 1; margin: 0; max-width: 34ch; color: #4d4b45; font-size: 14px; line-height: 1.6; }
+@media (hover: hover) and (pointer: fine) {
+  .od-public .work-archive--ledger .archive-grid:hover .selected-project:not(:hover) { opacity: .45; }
+  .od-public .work-archive--ledger .selected-project { transition: opacity 180ms ease, background-color 180ms ease; }
+  .od-public .work-archive--ledger .selected-project:hover { background: #ffffff70; }
+}
+@media (max-width: 750px) {
+  .od-public .work-archive--ledger .work-archive__header { grid-template-columns: 1fr; gap: 24px; }
+  .od-public .work-archive--ledger h1 { justify-self: start; width: auto; max-width: none; }
+  .od-public .work-archive--ledger .archive-grid { width: 100%; }
+  .od-public .work-archive--ledger .selected-project { grid-template-columns: minmax(110px, .55fr) minmax(0, 1fr); column-gap: 18px; row-gap: 12px; min-height: 0; padding: 20px 0; }
+  .od-public .work-archive--ledger .selected-project .media-frame { grid-column: 1; grid-row: 1 / span 2; }
+  .od-public .work-archive--ledger .selected-project .project-caption { grid-column: 2; grid-row: 1; }
+  .od-public .work-archive--ledger .selected-project .project-caption h3 { font-size: clamp(22px, 6vw, 32px); }
+  .od-public .work-archive--ledger .selected-project .project-summary { grid-column: 2; grid-row: 2; font-size: 13px; }
+}
