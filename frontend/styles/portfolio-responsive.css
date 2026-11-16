@@ -56,7 +56,12 @@
 
 /* Case-file rows use a four-column rhythm on desktop. */
 .od-public .work-archive.wrap.work-archive--ledger .work-archive__header .work-archive__intro { color: #bdbbb4; }
-.od-public .work-archive.wrap.work-archive--ledger .archive-grid { border-color: #3b3b3d; }
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  border-color: #3b3b3d;
+}
 .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project {
   grid-template-columns: 38px minmax(180px, .8fr) minmax(260px, 1.2fr) minmax(180px, .7fr);
   align-items: center;
