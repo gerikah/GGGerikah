@@ -10,6 +10,8 @@ import "@fontsource/poppins/latin-700.css";
 import "@frontend/styles/globals.css";
 import "@frontend/styles/media.css";
 import "@frontend/styles/editorial.css";
+import "@frontend/styles/noir-portfolio.css";
+import "@frontend/styles/portfolio-responsive.css";
 
 export const metadata: Metadata = {
   title: { default: "Gerikah — Design & Development", template: "%s — Gerikah" },

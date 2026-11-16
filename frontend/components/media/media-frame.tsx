@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useRef, useState, type ReactNode } from "react";
+import { useCallback, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { MEDIA_SIZES, type MediaVariant } from "./media-spec";
 
@@ -30,17 +30,30 @@ function Artwork({ src, alt, sizes, eager, unoptimized, onDimensions, onUnavaila
   />;
 }
 
-export function MediaFrame({ src, alt = "", variant = "landscape", sizes = MEDIA_SIZES.full, className = "", eager, unoptimized, onDimensions, children }: Omit<ImageProps, "src" | "alt" | "sizes"> & {
+export function MediaFrame({ src, alt = "", variant = "landscape", sizes = MEDIA_SIZES.full, className = "", eager, unoptimized, onDimensions, children, fitImageRatio = false, style }: Omit<ImageProps, "src" | "alt" | "sizes"> & {
   src?: string;
   alt?: string;
   sizes?: string;
   variant?: MediaVariant;
   className?: string;
   children?: ReactNode;
+  fitImageRatio?: boolean;
+  style?: CSSProperties;
 }) {
   const refresh = useFreshMedia(src);
-  return <span className={`media-frame media-frame--${variant} ${className}`} data-media-variant={variant}>
-    {src ? <Artwork key={src} src={src} alt={alt} sizes={sizes} eager={eager} unoptimized={unoptimized} onDimensions={onDimensions} onUnavailable={refresh} /> : <span className="media-empty" role="img" aria-label={alt || "Image not yet added"}>{children}</span>}
+  const [measured, setMeasured] = useState<{ src: string; ratio: number } | null>(null);
+  const recordDimensions = useCallback((width: number, height: number) => {
+    if (fitImageRatio && src && width > 0 && height > 0) {
+      setMeasured(previous => previous?.src === src && previous.ratio === width / height ? previous : { src, ratio: width / height });
+    }
+    onDimensions?.(width, height);
+  }, [fitImageRatio, onDimensions, src]);
+  const frameStyle = fitImageRatio && src && measured?.src === src
+    ? { ...style, aspectRatio: String(measured.ratio) }
+    : style;
+
+  return <span className={`media-frame media-frame--${variant} ${className}`} data-media-variant={variant} style={frameStyle}>
+    {src ? <Artwork key={src} src={src} alt={alt} sizes={sizes} eager={eager} unoptimized={unoptimized} onDimensions={recordDimensions} onUnavailable={refresh} /> : <span className="media-empty" role="img" aria-label={alt || "Image not yet added"}>{children}</span>}
   </span>;
 }
 

@@ -1,0 +1,193 @@
+/* Responsive refinements shared across the public Noir portfolio. */
+.od-public {
+  background-color: #0b0b0d;
+  background-image: linear-gradient(#0b0b0df8, #0b0b0df8), var(--texture-image);
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+.od-public .nav__logo { filter: brightness(0) invert(1); }
+
+/* The portrait-free hero keeps its headline and terminal readable on phones. */
+@media (max-width: 600px) {
+  .od-public .landing-hero .landing-hero__main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    padding-block: 42px 30px;
+  }
+  .od-public .landing-hero .landing-hero__identity { width: 100%; }
+  .od-public .landing-hero .landing-hero__identity .landing-hero__name {
+    width: 100%;
+    font-size: clamp(56px, 18.5vw, 84px);
+    letter-spacing: -.075em;
+    line-height: .82;
+  }
+  .od-public .landing-hero .landing-hero__statement { max-width: 48ch; }
+  .od-public .landing-hero .landing-hero__terminal { justify-self: stretch; }
+}
+
+/* Keep the tablet hero balanced instead of pinning its content to the bottom. */
+@media (min-width: 601px) and (max-width: 800px) {
+  .od-public .landing-hero .landing-hero__main { align-items: center; }
+}
+
+/* Keep biography and tool copy legible over the dark panels. */
+.od-public .flow-journey .flow-details-polished .flow-education h3,
+.od-public .flow-journey .flow-details-polished .flow-facts dt,
+.od-public .flow-journey .flow-about__credentials.flow-details-polished li > span {
+  color: #e9d88a;
+}
+.od-public .flow-journey .flow-details-polished .flow-education__school,
+.od-public .flow-journey .flow-details-polished .flow-education__metadata,
+.od-public .flow-journey .flow-details-polished .flow-about__deliverable,
+.od-public .flow-journey .flow-about__credentials.flow-details-polished li p {
+  color: #bdbbb4;
+}
+.od-public .flow-journey .flow-about__credentials.flow-details-polished {
+  border-color: #3b3b3d;
+  border-radius: 0;
+  background: #141416;
+}
+.od-public .flow-journey .flow-details-polished .flow-education {
+  border: 1px solid #3b3b3d;
+  border-radius: 0;
+  background: #141416;
+}
+.od-public .flow-journey .flow-github-history p { color: #bdbbb4; }
+
+/* Case-file rows use a four-column rhythm on desktop. */
+.od-public .work-archive.wrap.work-archive--ledger .work-archive__header .work-archive__intro { color: #bdbbb4; }
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid { border-color: #3b3b3d; }
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project {
+  grid-template-columns: 38px minmax(180px, .8fr) minmax(260px, 1.2fr) minmax(180px, .7fr);
+  align-items: center;
+  border-color: #3b3b3d;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project::before {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  padding-top: 4px;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .media-frame {
+  grid-column: 2;
+  grid-row: 1;
+  aspect-ratio: 2 / 1;
+  background: #141416;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption h3 {
+  color: #eeece5;
+  font-size: clamp(21px, 2.2vw, 34px);
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption span { color: #aaa8a2; }
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-summary {
+  grid-column: 4;
+  grid-row: 1;
+  align-self: center;
+  color: #bdbbb4;
+}
+.od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project:focus-visible {
+  outline: 2px solid #e9d88a;
+  outline-offset: 5px;
+}
+
+/* At tablet widths, the cover anchors a two-column title and description. */
+@media (min-width: 701px) and (max-width: 1099px) {
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project {
+    grid-template-columns: 34px minmax(150px, .8fr) minmax(0, 1.2fr);
+    column-gap: 20px;
+    row-gap: 9px;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project::before { grid-column: 1; grid-row: 1; }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .media-frame {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption { grid-column: 3; grid-row: 1; }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-summary { grid-column: 3; grid-row: 2; }
+}
+
+/* On phones, let artwork lead and put its title and short copy underneath. */
+@media (max-width: 700px) {
+  .od-public .work-archive.wrap.work-archive--ledger .work-archive__header { gap: 18px; }
+  .od-public .work-archive.wrap.work-archive--ledger .work-archive__header .work-archive__intro { max-width: 38ch; font-size: 15px; }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding-block: 18px 22px;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project::before {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0 0 2px;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .media-frame {
+    grid-column: 1;
+    grid-row: 2;
+    aspect-ratio: 2 / 1;
+    background: #141416;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption {
+    grid-column: 1;
+    grid-row: 3;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 4px;
+  }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption h3 { font-size: clamp(21px, 6vw, 30px); }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-caption span { flex: none; margin-top: 0; }
+  .od-public .work-archive.wrap.work-archive--ledger .archive-grid .selected-project .project-summary {
+    grid-column: 1;
+    grid-row: 4;
+    max-width: 52ch;
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+/* Case metadata switches to full-width values before the columns get cramped. */
+.od-public .case-metadata dt { color: #aaa8a2; }
+.od-public .case-page .visual-board figcaption { color: #aaa8a2; }
+@media (max-width: 600px) {
+  .od-public .case-metadata {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+    padding-inline: 0;
+  }
+  .od-public .case-metadata > div {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 10px;
+    align-items: baseline;
+  }
+  .od-public .case-metadata dd { min-width: 0; margin-top: 0; overflow-wrap: anywhere; }
+  .od-public .case-metadata .case-links { gap: 5px 12px; }
+  .od-public .case-page .visual-board figcaption { font-size: 13px; }
+}
+
+/* Keep the contact panel and its small print readable across routes. */
+.od-public .site-footer .site-footer__eyebrow,
+.od-public .site-footer .site-footer__intro,
+.od-public .site-footer .site-footer__bottom > p,
+.od-public .site-footer .site-footer__socials a,
+.od-public .site-footer .site-footer__bottom nav a {
+  color: #aaa8a2;
+}
+.od-public .site-footer .site-footer__copy h2 { color: #eeece5; }
+.od-public .site-footer .site-footer__bottom { border-color: #3b3b3d; }
+@media (max-width: 600px) {
+  .od-public .site-footer .site-footer__inner { width: calc(100% - var(--gutter) * 2); }
+  .od-public .site-footer .site-footer__main { gap: 24px; }
+  .od-public .site-footer .site-footer__actions { width: 100%; }
+  .od-public .site-footer .site-footer__email { justify-content: space-between; }
+  .od-public .site-footer .site-footer__bottom > p { max-width: 100%; }
+}

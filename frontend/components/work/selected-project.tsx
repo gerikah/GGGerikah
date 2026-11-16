@@ -8,7 +8,7 @@ export function SelectedProject({ project, slot }: { project?: Project; slot?: n
   const sizes = slot === 1 ? MEDIA_SIZES.full : MEDIA_SIZES.half;
   if (!project) return <div className="selected-placeholder"><MediaFrame className="project-image" alt={`Selected work slot ${slot}, awaiting a project`} sizes={sizes} /></div>;
   return <Link className="selected-project" href={`/work/${project.slug}`}>
-    <MediaFrame className="project-image" src={project.cover_image_url} alt={project.cover_alt} sizes={sizes} />
+    <MediaFrame className="project-image" src={project.cover_image_url} alt={project.cover_alt} sizes={sizes} fitImageRatio />
     <div className="project-caption"><h3>{project.title}</h3><span>Explore ↗</span></div>
     {project.short_description && <p className="project-summary">{project.short_description}</p>}
   </Link>;

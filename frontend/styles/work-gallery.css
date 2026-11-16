@@ -15,7 +15,7 @@
 .od-public .work-archive--ledger .archive-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; width: min(100%, 1100px); margin-left: auto; }
 .od-public .work-archive--ledger .selected-project { display: grid; grid-template-columns: minmax(130px, .58fr) minmax(260px, 1fr) minmax(220px, .8fr); column-gap: clamp(20px, 4vw, 64px); align-items: center; min-height: 170px; padding: 24px 0; border-top: 1px solid #1113; }
 .od-public .work-archive--ledger .selected-project:last-child { border-bottom: 1px solid #1113; }
-.od-public .work-archive--ledger .selected-project .media-frame { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 3; overflow: hidden; background: #deddd9; }
+.od-public .work-archive--ledger .selected-project .media-frame { grid-column: 1; grid-row: 1; aspect-ratio: 2 / 1; overflow: hidden; background: #171719; }
 .od-public .work-archive--ledger .selected-project .project-caption { grid-column: 2; grid-row: 1; display: block; padding: 0; }
 .od-public .work-archive--ledger .selected-project .project-caption h3 { font-size: clamp(23px, 2.7vw, 42px); font-weight: 500; line-height: 1; letter-spacing: -.06em; }
 .od-public .work-archive--ledger .selected-project .project-caption span { display: block; margin-top: 12px; color: #5e5b55; font-size: 13px; }
