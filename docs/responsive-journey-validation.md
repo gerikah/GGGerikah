@@ -1,6 +1,6 @@
-# Responsive flowchart validation
+# Responsive flowchart validation (historical)
 
-The home page now uses a content-sized connected journey. The original paper hero, portrait, warm off-white surface, monochrome type, pale yellow nodes, published projects, and colored tool logos remain in place.
+This report describes an earlier light, portrait-led version of the home page. The Noir redesign supersedes its visual details; the connected, responsive flowchart behavior remains part of the current design.
 
 ## Underlying changes
 
@@ -36,24 +36,11 @@ Checks sample the full page in overlapping viewport steps in both directions. At
 - TypeScript check: passed.
 - Production build: passed.
 
-Screenshots are actual local production-preview captures. The gallery contains hero, intro, background, capabilities, branches, tools, selected works, process, and contact stages at each of the five captured sizes:
-
-[Open the 45-screenshot gallery](../.local/responsive-journey/after/index.html)
-
-| Stage | Desktop, 1440 x 900 | Tablet, 768 x 1024 | Mobile, 390 x 844 |
-| --- | --- | --- | --- |
-| Introduction | [Screenshot](../.local/responsive-journey/after/1440-intro.png) | [Screenshot](../.local/responsive-journey/after/768-intro.png) | [Screenshot](../.local/responsive-journey/after/390-intro.png) |
-| Branches | [Screenshot](../.local/responsive-journey/after/1440-branches.png) | [Screenshot](../.local/responsive-journey/after/768-branches.png) | [Screenshot](../.local/responsive-journey/after/390-branches.png) |
-| Selected works | [Screenshot](../.local/responsive-journey/after/1440-works.png) | [Screenshot](../.local/responsive-journey/after/768-works.png) | [Screenshot](../.local/responsive-journey/after/390-works.png) |
-| Contact | [Screenshot](../.local/responsive-journey/after/1440-contact.png) | [Screenshot](../.local/responsive-journey/after/768-contact.png) | [Screenshot](../.local/responsive-journey/after/390-contact.png) |
-
-The screenshot files are local review artifacts under the existing ignored `.local` directory. They are not production assets.
+The screenshot files from this validation were local review artifacts. That capture folder has since been removed during reference cleanup.
 
 ## Visual review
 
-Reviewed actual desktop, tablet, mobile, 320px branch, and short-landscape captures. The existing GERIKAH/portrait composition remains the landing focal point. Supporting content follows consistent alignment, and the mobile branch descriptions use full available width while the two branch nodes retain their visible join.
-
-The design skill inspector also ran at 1440, 768, and 390px. Its generic house-style findings concern intentionally preserved features: Space Mono, flowchart labels and outlined nodes, project stacks, the suspended portrait shadow, warm palette, and compact technical text. Its covered-text flags identify the supplied overlapping hero composition and inactive project cards, which are deliberately covered and excluded from keyboard and accessibility interaction. These are retained under the user's explicit design-preservation instruction. No video or unrelated reveal animation was added; the extending path remains the signature interaction.
+This visual review and its findings apply to the earlier portrait-led design, not the current Noir styling.
 
 ## Files changed
 

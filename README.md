@@ -1,6 +1,6 @@
 # Gerikah — Design & Development
 
-A paper-and-ink portfolio with a portrait landing page, an expanding flowchart, and CMS-selected work. Space Mono headings and Poppins body text follow the supplied references in `frontend/REFERENCE/`. Published projects and contact destinations come from the authenticated Supabase CMS; homepage copy lives in `frontend/content/portfolio.ts`.
+A monochrome tech-noir portfolio with an expanding flowchart, responsive project archive, and CMS-managed work. Space Mono headings and Poppins body text carry the visual system. Published projects and contact destinations come from the authenticated Supabase CMS; homepage copy lives in `frontend/content/portfolio.ts`.
 
 See the [redesign and verification report](docs/editorial-redesign.md) for implementation details, backup locations, upload investigation and the first-project walkthrough. The [project structure](docs/project-structure.md) describes the current files and cleanup.
 

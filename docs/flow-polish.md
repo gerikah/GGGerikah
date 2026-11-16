@@ -1,6 +1,6 @@
 # Flowchart polish verification
 
-Completed 4 November 2026 against the existing paper-and-ink implementation and the flow.png–flow4.png references.
+Completed 4 November 2026 against the then-current paper-and-ink implementation. Those screenshot references have since been removed after the Noir redesign.
 
 ## Changes
 

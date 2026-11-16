@@ -1,4 +1,4 @@
-/** Edit portfolio copy and photo here.
+/** Edit portfolio copy here.
  * Contact destinations remain in CMS Settings; optional overrides below take precedence.
  */
 export const portfolio = {
@@ -17,9 +17,7 @@ export const portfolio = {
         design: 'Design', build: 'Build'
     },
     about: {
-        title: 'The person behind the flow.', photo: {
-            src: '/images/portfolio/gerikah-picture.png', alt: 'Portrait of Gerikah Alday'
-        }, bio: 'I’m Gerikah, a Computer Engineering graduate focused on UI/UX design and frontend development. I connect how a website looks, how it works, and how people move through it.', bioSupport: 'My process starts with understanding the problem, organizing the information, and mapping the user’s next steps. From there, I design, build, and refine the interface.', roleTitle: 'Focus', role: 'UI/UX & frontend development', basedTitle: 'Based in', based: 'Manila, Philippines', howTitle: 'How I work', how: 'Understand. Map. Design. Build. Refine.', education: ['BS Computer Engineering · Network Administration · 2026', 'Polytechnic University of the Philippines · Sta. Mesa, Manila'], receiveTitle: 'What you receive', receive: 'Design files, documented user flows, responsive interfaces, and clear implementation notes.', timeZone: 'Asia/Manila', timeLabel: 'Manila (UTC+8)', achievementsTitle: 'Learning & milestones', achievements: ['30+ freelance technical and academic engagements', 'AWS Academy Cloud Foundations · May 2026', 'Civil Service Professional Eligibility · March 2026'], resume: 'View résumé'
+        title: 'The person behind the flow.', bio: 'I’m Gerikah, a Computer Engineering graduate focused on UI/UX design and frontend development. I connect how a website looks, how it works, and how people move through it.', bioSupport: 'My process starts with understanding the problem, organizing the information, and mapping the user’s next steps. From there, I design, build, and refine the interface.', roleTitle: 'Focus', role: 'UI/UX & frontend development', basedTitle: 'Based in', based: 'Manila, Philippines', howTitle: 'How I work', how: 'Understand. Map. Design. Build. Refine.', education: ['BS Computer Engineering · Network Administration · 2026', 'Polytechnic University of the Philippines · Sta. Mesa, Manila'], receiveTitle: 'What you receive', receive: 'Design files, documented user flows, responsive interfaces, and clear implementation notes.', timeZone: 'Asia/Manila', timeLabel: 'Manila (UTC+8)', achievementsTitle: 'Learning & milestones', achievements: ['30+ freelance technical and academic engagements', 'AWS Academy Cloud Foundations · May 2026', 'Civil Service Professional Eligibility · March 2026'], resume: 'View résumé'
     },
     work: {
             title: 'Selected works', intro: 'A selection of projects where structure, interface design, and implementation come together.', read: 'View project', all: 'All projects', previous: 'Previous project', next: 'Next project'
