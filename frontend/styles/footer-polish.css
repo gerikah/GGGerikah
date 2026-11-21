@@ -5,8 +5,8 @@
   padding: clamp(36px, 4vw, 56px) 0 24px;
 }
 .od-public .site-footer .site-footer__inner {
-  width: calc(100% - var(--gutter) * 2);
-  max-width: 1440px;
+  width: var(--content-width);
+  max-width: none;
   margin-inline: auto;
 }
 .od-public .site-footer .site-footer__main {

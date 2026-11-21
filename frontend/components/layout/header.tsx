@@ -49,7 +49,7 @@ export function Header() {
     ];
     return <><div className="nav-trigger" ref={sentinel} aria-hidden="true"/><div className="nav-shell" data-home={home ? "true" : undefined} data-scrolled={scrolled}><header className="nav" data-scrolled={scrolled}>
     <Link className="nav__brand" href="/" aria-label={c.nav.home} data-nav-target="top"><Image src="/images/brand/logo.svg" alt="Gerikah Alday logo" width={40} height={40} sizes="40px" className="nav__logo"/></Link>
-    <nav className="nav__links" aria-label={c.nav.label}>{links.map((link) => <Link key={link.label} href={link.href} className={"nav__link" + (link.target === "contact" ? " nav__link--contact" : "")} aria-label={link.label} data-label={link.label} data-nav-target={link.target} aria-current={!home && link.target === "work" && (pathname.startsWith("/work") || pathname.startsWith("/case-studies")) ? "page" : home && active === link.target ? "location" : undefined}><span>{link.label}</span></Link>)}</nav>
     <div className="nav__status" aria-label="Current availability"><span>MANILA / UTC+8</span><span className="nav__availability"><i aria-hidden="true"/>OPEN TO WORK</span></div>
+    <nav className="nav__links" aria-label={c.nav.label}>{links.map((link) => <Link key={link.label} href={link.href} className="nav__link" aria-label={link.label} data-label={link.label} data-nav-target={link.target} aria-current={!home && link.target === "work" && (pathname.startsWith("/work") || pathname.startsWith("/case-studies")) ? "page" : home && active === link.target ? "location" : undefined}><span>{link.label}</span></Link>)}</nav>
   </header></div><noscript><style>{".nav-shell .nav{background:var(--bg)}"}</style></noscript></>;
 }
