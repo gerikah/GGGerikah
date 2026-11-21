@@ -190,7 +190,7 @@
 .od-public .site-footer .site-footer__copy h2 { color: #eeece5; }
 .od-public .site-footer .site-footer__bottom { border-color: #3b3b3d; }
 @media (max-width: 600px) {
-  .od-public .site-footer .site-footer__inner { width: calc(100% - var(--gutter) * 2); }
+  .od-public .site-footer .site-footer__inner { width: var(--content-width); }
   .od-public .site-footer .site-footer__main { gap: 24px; }
   .od-public .site-footer .site-footer__actions { width: 100%; }
   .od-public .site-footer .site-footer__email { justify-content: space-between; }

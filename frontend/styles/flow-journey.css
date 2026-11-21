@@ -5,8 +5,8 @@ html:has(.flow-journey) { scroll-padding-top: 0; }
   --flow-lane: clamp(190px, 23vw, 280px);
   --flow-gap: clamp(36px, 5vw, 76px);
   position: relative;
-  width: calc(100% - var(--gutter) * 2);
-  max-width: 1440px;
+  width: var(--content-width);
+  max-width: none;
   margin-inline: auto;
   padding-top: clamp(48px, 7vw, 100px);
   color: var(--flow-ink);
@@ -182,4 +182,4 @@ html:has(.flow-journey) { scroll-padding-top: 0; }
 @media (prefers-reduced-motion:reduce) { .flow-mobile-cue span { animation: none; } .flow-node,.flow-project-card { transition: none; } }
 @keyframes flow-cue { 50% { transform: translateY(4px); } }
 
-@media(max-width:600px){.od-public:has(.flow-journey){--gutter:16px}.od-public .nav__link{font-size:12px}}
+@media(max-width:600px){.od-public:has(.flow-journey){--gutter:18px}.od-public .nav__link{font-size:12px}}
